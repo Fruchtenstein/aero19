@@ -1,0 +1,181 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <title>Соревнования на Кубок Аэробии | Статистика</title>
+  <meta content="http://aerobia.ru/assets/aerobia-2ebacfbc9d1c2bc03bfab224ec470e42.gif" property="og:image" />
+  <link href="assets/application-1fd0a358e6b9e12ee7c6518fefc54274.css" media="screen" rel="stylesheet" type="text/css" />
+<style type="text/css">
+.datagrid table { border-collapse: collapse; text-align: left; width: 100%; } .datagrid {font: normal 12px/150% Arial, Helvetica, sans-serif; background: #fff; overflow: hidden; border: 1px solid #8C8C8C; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; }.datagrid table td, .datagrid table th { padding: 3px 10px; }.datagrid table thead th {background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #8C8C8C), color-stop(1, #7D7D7D) );background:-moz-linear-gradient( center top, #8C8C8C 5%, #7D7D7D 100% );filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#8C8C8C', endColorstr='#7D7D7D');background-color:#8C8C8C; color:#FFFFFF; font-size: 15px; font-weight: bold; border-left: 1px solid #A3A3A3; } .datagrid table thead th:first-child { border: none; }.datagrid table tbody td { color: #444444; border-left: 1px solid #DBDBDB;font-size: 12px;font-weight: normal; }.datagrid table tbody .alt td { background: #EBEBEB; color: #444444; }.datagrid table tbody td:first-child { border-left: none; }.datagrid table tbody tr:last-child td { border-bottom: none; }.datagrid table tfoot td div { border-top: 1px solid #8C8C8C;background: #EBEBEB;} .datagrid table tfoot td { padding: 3px 10px; font-size: 12px; background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #8C8C8C), color-stop(1, #7D7D7D)); color:#FFFFFF } .datagrid table tfoot td div{ padding: 2px; }.datagrid table tfoot td ul { margin: 0; padding:0; list-style: none; text-align: right; }.datagrid table tfoot  li { display: inline; }.datagrid table tfoot li a { text-decoration: none; display: inline-block;  padding: 2px 8px; margin: 1px;color: #F5F5F5;border: 1px solid #8C8C8C;-webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #8C8C8C), color-stop(1, #7D7D7D) );background:-moz-linear-gradient( center top, #8C8C8C 5%, #7D7D7D 100% );filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#8C8C8C', endColorstr='#7D7D7D');background-color:#8C8C8C; }.datagrid table tfoot ul.active, .datagrid table tfoot ul a:hover { text-decoration: none;border-color: #7D7D7D; color: #F5F5F5; background: none; background-color:#8C8C8C;}div.dhtmlx_window_active, div.dhx_modal_cover_dv { position: fixed !important; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <strong class="logo ru"><a href="http://aerobia.ru">Aerobia</a></strong>
+  </div>
+</header>
+
+  <aside class="current user">
+    <div>
+      <div>
+        <div class="name">
+          <div>
+            <strong>Кубок Аэробии</strong>
+          </div>
+        </div>
+        <nav>
+            <ul>
+                <li class="workouts"><a href="index.html"><span></span>Таблица</a></li>
+                <li class="friends"><a href="teams<%=week%>.html"><span></span>Команды</a></li>
+                <li class="users active"><a href="users.html"><span></span>Участники</a></li>
+                <li class="statistics"><a href="statistics<%=week%>.html"><span></span>Статистика</a></li>
+                <li class="bests"><a href="rules.html"><span></span>Правила</a></li>
+            </ul>
+        </nav>
+      </div>
+    </div>
+  </aside>
+
+
+<div class="middle">
+  <div class="block">
+  <div class="section">
+    <table>
+      <tr>
+        <td class="aside">
+          <!-- nav class="sub"><ul><li class="active"><span>Моя лента</span></li> <li><a href="http://aerobia.ru/favorites">Избранное</a></li></ul> <ul><li><a href="http://aerobia.ru/posts/best">Лучшее</a></li> <li><a href="http://aerobia.ru/posts">Общая лента</a></li></ul></nav -->
+          <nav class="sub">
+              <ul>
+                  <% runners.each do |runner| %>
+                        <li><a href="u<%= runner[0] %>.html"><%= runner[1] %></a></li>
+                  <%  end %>
+              </ul>
+          </nav>
+
+          <aside class="clubs separate">
+  <h3><a href="http://aerobia.ru/my/clubs">Клубы</a></h3>
+  <ul>
+      <li>
+        <a href="http://aerobia.ru/clubs/413" class="avatar"><img src="assets/413_cup3_thumbnail.jpg" /></a>
+        <div>
+          <b><a href="http://aerobia.ru/clubs/413">Кубок Аэробии</a></b>
+        </div>
+      </li>
+      <li>
+        <a href="http://aerobia.ru/clubs/153" class="avatar"><img src="assets/153_Boston-Running-Routes_thumbnail.jpg" /></a>
+        <div>
+          <b><a href="http://aerobia.ru/clubs/153">Все о беге</a></b>
+        </div>
+      </li>
+      <li>
+        <a href="http://aerobia.ru/clubs/190" class="avatar"><img src="assets/190_aerobia_thumbnail.jpg" /></a>
+        <div>
+          <b><a href="http://aerobia.ru/clubs/190">Аэробия</a></b>
+        </div>
+      </li>
+      <!--li>
+        <a href="http://aerobia.ru/clubs/417" class="avatar"><img src="assets/417_logo_team1_copy44_thumbnail.jpg" /></a>
+        <div>
+          <b><a href="http://aerobia.ru/clubs/417">Команда № 1</a></b>
+        </div>
+      </li>
+      <li>
+        <a href="http://aerobia.ru/clubs/418" class="avatar"><img src="assets/418_2018-01-05_20-28-01_thumbnail.jpg" /></a>
+        <div>
+          <b><a href="http://aerobia.ru/clubs/418">Золотые люди</a></b>
+        </div>
+      </li>
+      <li>
+        <a href="http://aerobia.ru/clubs/416" class="avatar"><img src="assets/avatar_thumbnail.jpg" /></a>
+        <div>
+          <b><a href="http://aerobia.ru/clubs/416">Семь верст не крюк</a></b>
+        </div>
+      </li>
+      <li>
+        <a href="http://aerobia.ru/clubs/421" class="avatar"><img src="assets/avatar_thumbnail.jpg" /></a>
+        <div>
+          <b><a href="http://aerobia.ru/clubs/421">Спортивный квартал</a></b>
+        </div>
+      </li>
+      <li>
+        <a href="http://aerobia.ru/clubs/423" class="avatar"><img src="assets/423_c62ac12373dec8179712ba6e7b87c7dd8ae14703_thumbnail.jpg" /></a>
+        <div>
+          <b><a href="http://aerobia.ru/clubs/423">Пятый элемент</a></b>
+        </div>
+      </li>
+      <li>
+        <a href="http://aerobia.ru/clubs/419" class="avatar"><img src="assets/avatar_thumbnail.jpg" /></a>
+        <div>
+          <b><a href="http://aerobia.ru/clubs/419">Палата №6</a></b>
+        </div>
+      </li>
+      <li>
+        <a href="http://aerobia.ru/clubs/422" class="avatar"><img src="assets/422_bestfriend1_thumbnail.jpg" /></a>
+        <div>
+          <b><a href="http://aerobia.ru/clubs/422">Великолепная семерка</a></b>
+        </div>
+      </li>
+      <li>
+        <a href="http://aerobia.ru/clubs/415" class="avatar"><img src="assets/415_barra_thumbnail.jpg" /></a>
+        <div>
+          <b><a href="http://aerobia.ru/clubs/415">Барракуды</a></b>
+        </div>
+      </li-->
+</aside>
+
+
+        </td>
+        <td>
+            <br />
+            <!--center><img src="cup.png"></img></center-->
+            <br />
+            <%=data%>
+
+
+
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+
+</div>
+
+<footer>
+  <div>
+
+    <p class="download">
+  <span>Скачать<br> Аэробия для</span> <a href="https://itunes.apple.com/ru/app/aerobia/id566375588?ls=1&amp;mt=8" class="iphone">iPhone</a> или <a href="https://play.google.com/store/apps/details?id=lv.scada.aerobia" class="android">Android</a>
+</p>
+
+    <div class="description">
+      <h3 class="aerobia ru">Аэробия</h3>
+      Аэробия&nbsp;&mdash; это спортивный трекер позволяющий отслеживать и&nbsp;анализировать результаты ваших тренировок и&nbsp;делиться ими с&nbsp;друзьями. Лучший инструмент для бега, велоспорта, ходьбы, беговых лыж и&nbsp;любой другой физической активности.
+
+    </div>
+
+    <a href="http://aerobia.ru/investor">Информация инвесторам</a>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="http://aerobia.ru/wall">Доска почета</a>
+  </div>
+</footer>
+
+<div class="foobar">
+  <div>
+    <div>
+      <!--p class="copyright"><a href="http://www.scada.lv/" class="scada" target="_blank">Сервис создан в <i>Scada</i></a></p-->
+      <ul>
+        <li class="feedback"><a href="mailto:info@aerobia.ru">info@aerobia.ru</a></li>
+        <li><a href="http://www.facebook.com/Aerobia" target="_blank">Facebook</a></li>
+        <li><a href="http://vk.com/aerobia" target="_blank">Вконтакте</a></li>
+        <li><a href="https://twitter.com/Aerobiaru" target="_blank">Twitter</a></li>
+        <!--li class="terms"><a href="http://aerobia.ru/terms_of_service">Пользовательское соглашение</a></li-->
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>
