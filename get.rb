@@ -21,7 +21,7 @@ end
 
 $stdout.sync = true
 now = Time.now.getutc
-if now < STARTPROLOG or now > ENDCUP
+if now < STARTPROLOG or now > CLOSECUP
     puts "#{now}: Not yet time..."
     exit
 end
@@ -34,8 +34,8 @@ if getstart < STARTPROLOG
     getstart = STARTPROLOG
 end
 getend = now.end_of_week
-if getend > ENDCUP
-    getend = ENDCUP
+if getend > CLOSECUP
+    getend = CLOSECUP
 end
 conn = HTTPClient.new
 token = auth
