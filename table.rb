@@ -79,6 +79,7 @@ runners.each do |r|
     data += "<tr><td><b>Имя</b></td><td>#{r[1]}</td></tr>"
     data += "<tr><td><b>Команда</b></td><td>#{teams[r[2]-1][1]}</td></tr>"
     data += "<tr><td><b>Недельный план</b></td><td>#{(7*r[3]/365).round(2)}</td></tr>"
+    data += "<tr><td><b>Профиль на Аэробии</b></td><td><a href=\"http://aerobia.ru/users/#{r[0]}\">http://aerobia.ru/users/#{r[0]}</a></td></tr>"
     data += "</tbody>\n"
     data += "</table>\n"
 
