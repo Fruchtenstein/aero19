@@ -35,33 +35,45 @@ users_erb = ERB.new(File.read('users.html.erb'))
 
 db = SQLite3::Database.new("2019.db")
 
-prolog += "<center>\n"
-prolog += "<h1>Пролог</h1>\n"
-prolog += "</center>\n"
-prolog += "<div class=\"datagrid\">\n"
-prolog += "<table>\n"
-prolog += "<thead><tr><th>Имя</th><th>Команда</th><th>Объемы 2018 (км/нед)</th><th>Результат (км)</th></tr></thead>\n"
-prolog += "<tbody>\n"
-
-teams = db.execute("SELECT * FROM teams")
-
-odd = true
-runners = db.execute("SELECT runnerid,runnername,7*goal/365,teamid FROM runners")
-runners.each do |r|
-    r << db.execute("SELECT COALESCE(SUM(distance),0) AS dist FROM log WHERE runnerid=#{r[0]} AND date>'#{STARTPROLOG.iso8601}' AND date<'#{ENDPROLOG.iso8601}'")[0][0]
-end
-runners.sort! { |x,y| y[4] <=> x[4] }
-runners.each do |r|
-    if odd then
-        prolog += "<tr><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{teams[r[3]-1][1]}</td><td>#{r[2].round(2)}</td><td>#{r[4].round(2)}</td></tr>\n"
-    else
-        prolog += "<tr class=\"alt\"><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{teams[r[3]-1][1]}</td><td>#{r[2].round(2)}</td><td>#{r[4].round(2)}</td></tr>\n"
+if now > STARTPROLOG and now <7.days.after(CLOSEPROLOG)
+    prolog += "<center>\n"
+    prolog += "<h1>Пролог</h1>\n"
+    prolog += "</center>\n"
+    prolog += "<div class=\"datagrid\">\n"
+    prolog += "<table>\n"
+    prolog += "<thead><tr><th>Имя</th><th>Команда</th><th>Объемы 2018 (км/нед)</th><th>Результат (км)</th><th>Очки</th></tr></thead>\n"
+    prolog += "<tbody>\n"
+    
+    teams = db.execute("SELECT * FROM teams")
+    
+    odd = true
+    runners = db.execute("SELECT runnerid,runnername,7*goal/365,teamid FROM runners")
+    runners.each do |r|
+        r << db.execute("SELECT COALESCE(SUM(distance),0) AS dist FROM log WHERE runnerid=#{r[0]} AND date>'#{STARTPROLOG.iso8601}' AND date<'#{ENDPROLOG.iso8601}'")[0][0]
     end
-    odd = !odd
+    runners.sort! { |x,y| y[4] <=> x[4] }
+    runners.each do |r|
+        if now > CLOSEPROLOG
+            points = case runners.index(r)
+                     when 0 then 20
+                     when 1 then 10
+                     when 2 then 5
+                     else 0
+                     end
+        else
+            points = 0
+        end
+        if odd then
+            prolog += "<tr><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{teams[r[3]-1][1]}</td><td>#{r[2].round(2)}</td><td>#{r[4].round(2)}</td><td>#{points}</td></tr>\n"
+        else
+            prolog += "<tr class=\"alt\"><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{teams[r[3]-1][1]}</td><td>#{r[2].round(2)}</td><td>#{r[4].round(2)}</td><td>#{points}</td></tr>\n"
+        end
+        odd = !odd
+    end
+    
+    prolog += "</tbody>\n"
+    prolog += "</table></div>\n"
 end
-
-prolog += "</tbody>\n"
-prolog += "</table></div>\n"
 
 File.open('html/index.html', 'w') { |f| f.write(index_erb.result) }
 File.open('html/rules.html', 'w') { |f| f.write(rules_erb.result) }

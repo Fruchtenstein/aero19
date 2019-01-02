@@ -1,5 +1,6 @@
 STARTPROLOG = Time.new(2019, 1, 1).utc
 ENDPROLOG = Time.new(2019, 1, 6, 23, 59, 59).utc
+CLOSEPROLOG = Time.new(2019, 1, 8, 23, 59, 59).utc
 STARTCHM = Time.new(2019, 1, 7).utc
 ENDCHM = Time.new(2019, 12, 29, 23, 59, 59).utc
 CLOSECHM = Time.new(2019, 12, 31, 23, 59, 59).utc
