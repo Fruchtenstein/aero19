@@ -31,6 +31,7 @@ prolog = ""
 index_erb = ERB.new(File.read('index.html.erb'))
 rules_erb = ERB.new(File.read('rules.html.erb'))
 user_erb = ERB.new(File.read('u.html.erb'))
+users_erb = ERB.new(File.read('users.html.erb'))
 
 db = SQLite3::Database.new("2019.db")
 
@@ -66,7 +67,8 @@ File.open('html/index.html', 'w') { |f| f.write(index_erb.result) }
 File.open('html/rules.html', 'w') { |f| f.write(rules_erb.result) }
 
 data = ""
-runners = db.execute("SELECT * FROM runners") do |r|
+runners = db.execute("SELECT * FROM runners ORDER BY runnername")
+runners.each do |r|
     data = ""
     data += "<center>\n"
     data += "<h1>Карточка участника</h1>\n"
@@ -80,5 +82,32 @@ runners = db.execute("SELECT * FROM runners") do |r|
     data += "</tbody>\n"
     data += "</table>\n"
 
-    File.open("html/u#{r[0]}.html", 'w') { |f| f.write(user_erb.result) }
+    File.open("html/u#{r[0]}.html", 'w') { |f| f.write(user_erb.result(binding)) }
 end
+data = ""
+data += "<center>\n"
+data += "<h1>Команды и участники</h1>\n"
+data += "</center>\n"
+db.execute("SELECT * FROM teams ORDER BY teamid") do |t|
+    data += "<center>\n"
+    data += "<h2>#{t[1]}</h1>\n"
+    data += "</center>\n"
+    data += "<div class=\"datagrid\">\n"
+    data += "<table>\n"
+    data += "<tbody>\n"
+    data += "<thead><tr><th>Имя</th><th>Объемы 2018 (км/год)</th></tr></thead>"
+    odd = true
+    db.execute("SELECT * FROM runners WHERE teamid=#{t[0]}") do |r|
+        if odd
+            data += "<tr><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[3].round(2)}</td></tr>\n"
+        else
+            data += "<tr class=\"alt\"><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[3].round(2)}</td></tr>\n"
+        end
+        odd = !odd
+    end
+    data += "</tbody>\n"
+    data += "</table>\n"
+    data += "</div>\n"
+    data += "<br />\n"
+end
+File.open("html/users.html", 'w') { |f| f.write(users_erb.result(binding)) }

@@ -28,8 +28,8 @@
             <ul>
                 <li class="workouts"><a href="index.html"><span></span>Таблица</a></li>
                 <li class="friends"><a href="teams<%=week%>.html"><span></span>Команды</a></li>
-                <li class="users"><a href="workouts.html"><span></span>Тренировки</a></li>
-                <li class="statistics active"><a href="statistics<%=week%>.html"><span></span>Статистика</a></li>
+                <li class="users active"><a href="users.html"><span></span>Участники</a></li>
+                <li class="statistics"><a href="statistics<%=week%>.html"><span></span>Статистика</a></li>
                 <li class="bests"><a href="rules.html"><span></span>Правила</a></li>
             </ul>
         </nav>
@@ -45,6 +45,17 @@
       <tr>
         <td class="aside">
           <!-- nav class="sub"><ul><li class="active"><span>Моя лента</span></li> <li><a href="http://aerobia.ru/favorites">Избранное</a></li></ul> <ul><li><a href="http://aerobia.ru/posts/best">Лучшее</a></li> <li><a href="http://aerobia.ru/posts">Общая лента</a></li></ul></nav -->
+          <nav class="sub">
+              <ul>
+                  <% runners.each do |runner|
+                      if runner[0] == r[0] %>
+                        <li class="active"><a href="u<%= runner[0] %>.html"><%= runner[1] %></a></li>
+                    <% else %>
+                        <li><a href="u<%= runner[0] %>.html"><%= runner[1] %></a></li>
+                    <% end %>
+                <%  end %>
+              </ul>
+          </nav>
 
           <aside class="clubs separate">
   <h3><a href="http://aerobia.ru/my/clubs">Клубы</a></h3>
