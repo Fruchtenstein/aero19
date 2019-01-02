@@ -40,7 +40,7 @@ prolog += "<h1>Пролог</h1>\n"
 prolog += "</center>\n"
 prolog += "<div class=\"datagrid\">\n"
 prolog += "<table>\n"
-prolog += "<thead><tr><th>Имя</th><th>Команда</th><th>Цель2018 (км)</th><th>Результат (км)</th></tr></thead>\n"
+prolog += "<thead><tr><th>Имя</th><th>Команда</th><th>Объемы 2018 (км/нед)</th><th>Результат (км)</th></tr></thead>\n"
 prolog += "<tbody>\n"
 
 teams = db.execute("SELECT * FROM teams")
