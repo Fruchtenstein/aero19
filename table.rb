@@ -69,6 +69,7 @@ File.open('html/rules.html', 'w') { |f| f.write(rules_erb.result) }
 data = ""
 runners = db.execute("SELECT * FROM runners ORDER BY runnername")
 runners.each do |r|
+    note = db.execute("SELECT title FROM titles WHERE runnerid=#{r[0]}").join("<br />")
     data = ""
     data += "<center>\n"
     data += "<h1>Карточка участника</h1>\n"
@@ -79,6 +80,7 @@ runners.each do |r|
     data += "<tr><td><b>Имя</b></td><td>#{r[1]}</td></tr>"
     data += "<tr><td><b>Команда</b></td><td>#{teams[r[2]-1][1]}</td></tr>"
     data += "<tr><td><b>Недельный план</b></td><td>#{(7*r[3]/365).round(2)}</td></tr>"
+    data += "<tr><td><b>Достижения</b></td><td>#{note}</td></tr>"
     data += "<tr><td><b>Профиль на Аэробии</b></td><td><a href=\"http://aerobia.ru/users/#{r[0]}\">http://aerobia.ru/users/#{r[0]}</a></td></tr>"
     data += "</tbody>\n"
     data += "</table>\n"
@@ -96,13 +98,14 @@ db.execute("SELECT * FROM teams ORDER BY teamid") do |t|
     data += "<div class=\"datagrid\">\n"
     data += "<table>\n"
     data += "<tbody>\n"
-    data += "<thead><tr><th>Имя</th><th>Объемы 2018 (км/год)</th></tr></thead>"
+    data += "<thead><tr><th>Имя</th><th>Объемы 2018 (км/год)</th><th>Примечания</th></tr></thead>"
     odd = true
-    db.execute("SELECT * FROM runners WHERE teamid=#{t[0]}") do |r|
+    db.execute("SELECT * FROM runners WHERE teamid=#{t[0]} ORDER BY goal DESC") do |r|
+        note = db.execute("SELECT title FROM titles WHERE runnerid=#{r[0]}").join("<br />")
         if odd
-            data += "<tr><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[3].round(2)}</td></tr>\n"
+            data += "<tr><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[3].round(2)}</td><td>#{note}</td></tr>\n"
         else
-            data += "<tr class=\"alt\"><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[3].round(2)}</td></tr>\n"
+            data += "<tr class=\"alt\"><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[3].round(2)}</td><td>#{note}</td></tr>\n"
         end
         odd = !odd
     end
