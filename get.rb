@@ -86,24 +86,3 @@ db.execute("SELECT * FROM runners") do |r|
 #    dist = db.execute("SELECT COALESCE(SUM(distance),0) FROM log WHERE runnerid=#{rid} AND date>#{1.week.ago.beginning_of_week} and date<#{1.week.ago.end_of_week}")[0]
 #    db.execute("INSERT OR REPLACE INTO wlog VALUES (
 end
-
-if now.wday == DOW and 1.week.ago.beginning_of_week >= STARTCHM and 1.week.ago.beginning_of_week <= ENDCHM
-    teams = []
-    (1..TEAMS).each do |t|
-        num_of_runners = db.execute("SELECT COUNT(*) FROM runners WHERE teamid=#{t}")[0][0]
-        sum_pct = 0
-        db.execute("SELECT runnerid, goal*7/365.0 FROM runners WHERE teamid=#{t}") do |r|
-            dist = db.execute("SELECT COALESCE(SUM(distance),0) FROM log WHERE runnerid=#{r[0]} AND date>'#{1.week.ago.beginning_of_week}' AND date<'#{1.week.ago.end_of_week}'")[0][0]
-            goal = r[1]
-            sum_pct += (dist/goal)*100
-        end
-        teams << [t, 1.week.ago.strftime("%W").to_i, sum_pct/num_of_runners]
-    end
-    teams.sort! { |x,y| y[2] <=> x[2] }
-    p teams
-end
-
-
-if now.wday == DOW and 1.week.ago.beginning_of_week >= STARTCHM and 1.week.ago.beginning_of_week <= ENDCHM
-
-end

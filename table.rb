@@ -27,6 +27,9 @@ end
 today = DateTime.parse(now.to_s)
 week = today.cweek
 prolog = ""
+champ = ""
+cup = ""
+
 
 index_erb = ERB.new(File.read('index.html.erb'))
 rules_erb = ERB.new(File.read('rules.html.erb'))
@@ -35,13 +38,13 @@ users_erb = ERB.new(File.read('users.html.erb'))
 
 db = SQLite3::Database.new("2019.db")
 
-if now > STARTPROLOG and now <7.days.after(CLOSEPROLOG)
+if now > STARTPROLOG and now < 7.days.after(CLOSEPROLOG)
     prolog += "<center>\n"
     prolog += "<h1>Пролог</h1>\n"
     prolog += "</center>\n"
     prolog += "<div class=\"datagrid\">\n"
     prolog += "<table>\n"
-    prolog += "<thead><tr><th>Имя</th><th>Команда</th><th>Объемы 2018 (км/нед)</th><th>Результат (км)</th><th>Очки</th></tr></thead>\n"
+    prolog += "<thead><tr><th>Имя</th><th>Команда</th><th>Объемы 2018 (км/нед)</th><th>Результат (км)</th></tr></thead>\n"
     prolog += "<tbody>\n"
     
     teams = db.execute("SELECT * FROM teams")
@@ -53,20 +56,20 @@ if now > STARTPROLOG and now <7.days.after(CLOSEPROLOG)
     end
     runners.sort! { |x,y| y[4] <=> x[4] }
     runners.each do |r|
-        if now > CLOSEPROLOG
-            points = case runners.index(r)
-                     when 0 then 20
-                     when 1 then 10
-                     when 2 then 5
-                     else 0
-                     end
-        else
-            points = 0
-        end
+#        if now > CLOSEPROLOG
+#            points = case runners.index(r)
+#                     when 0 then 20
+#                     when 1 then 10
+#                     when 2 then 5
+#                     else 0
+#                     end
+#        else
+#            points = 0
+#        end
         if odd then
-            prolog += "<tr><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{teams[r[3]-1][1]}</td><td>#{r[2].round(2)}</td><td>#{r[4].round(2)}</td><td>#{points}</td></tr>\n"
+            prolog += "<tr><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{teams[r[3]-1][1]}</td><td>#{r[2].round(2)}</td><td>#{r[4].round(2)}</td></tr>\n"
         else
-            prolog += "<tr class=\"alt\"><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{teams[r[3]-1][1]}</td><td>#{r[2].round(2)}</td><td>#{r[4].round(2)}</td><td>#{points}</td></tr>\n"
+            prolog += "<tr class=\"alt\"><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{teams[r[3]-1][1]}</td><td>#{r[2].round(2)}</td><td>#{r[4].round(2)}</td></tr>\n"
         end
         odd = !odd
     end
@@ -75,11 +78,86 @@ if now > STARTPROLOG and now <7.days.after(CLOSEPROLOG)
     prolog += "</table></div>\n"
 end
 
+if now > STARTCHM
+    w = Date.today.cweek
+    teams = db.execute("SELECT teams.teamid, teamname, SUM(points) AS p FROM points, teams WHERE points.teamid=teams.teamid AND week<#{w} GROUP BY teams.teamid ORDER BY p DESC")
+    champ +=   "<center>"
+    champ +=   "    <h1>Текущее положение команд</h1>"
+    champ +=   "    <br />"
+    champ +=   "    <br />"
+    champ +=   "</center>"
+    champ +=   "<div class=\"datagrid\"><table>"
+    champ +=   "   <thead><tr><th>Команда</th><th>Очки</th></tr></thead>"
+    odd = true
+    teams.each do |t|
+        if odd
+            champ += "  <tr><td>#{t[1]}</td><td>#{t[2]}</td></tr>"
+        else
+            champ += "  <tr class=\"alt\"><td>#{t[1]}</td><td>#{t[2]}</td></tr>"
+        end
+        odd = !odd
+    end
+    champ +=   "   </tbody>"
+    champ +=   "</table>"
+    champ +=   "</div>"
+    champ +=   "<br />"
+    teams = db.execute("SELECT teams.teamid, points, pcts, teamname  FROM points,teams WHERE points.teamid=teams.teamid AND week=#{w} ORDER BY points DESC")
+    champ +=   "<center>"
+    champ +=   "    <h1>Предварительные результаты #{w} недели</h1>"
+    champ +=   "    <a href=\"teams#{w}.html\">Подробнее</a>"
+    champ +=   "    <br />"
+    champ +=   "    <br />"
+    champ +=   "</center>"
+    champ +=   "<div class=\"datagrid\"><table>"
+    champ +=   "   <thead><tr><th>Команда</th><th>Выполнено (%)</th><th>Очки</th><th>Сумма</th></tr></thead>"
+    odd = true
+    teams.each do |t|
+        p t
+        sum = db.execute("SELECT SUM(points) FROM points WHERE teamid=#{t[0]} AND week<=#{w}")[0]
+        if odd
+            champ += "  <tr><td>#{t[3]}</td><td>#{t[2].round(2)}</td><td>#{t[1]}</td><td>#{sum[0]}</td></tr>"
+        else
+            champ += "  <tr class=\"alt\"><td>#{t[3]}</td><td>#{t[2].round(2)}</td><td>#{t[1]}</td><td>#{sum[0]}</td></tr>"
+        end
+        odd = !odd
+    end
+    champ +=   "   </tbody>"
+    champ +=   "</table>"
+    champ +=   "</div>"
+    champ +=   "<br />"
+    [*STARTCHM.to_date.cweek..(Date.today.cweek-1)].reverse_each do |w|
+         p w
+         teams = db.execute("SELECT teams.teamid, points, pcts, teamname  FROM points,teams WHERE points.teamid=teams.teamid AND week=#{w} ORDER BY points")
+         champ +=   "<center>"
+         champ +=   "    <h1>Результаты #{w} недели</h1>"
+         champ +=   "    <a href=\"teams#{w}.html\">Подробнее</a>"
+         champ +=   "    <br />"
+         champ +=   "    <br />"
+         champ +=   "</center>"
+         champ +=   "<div class=\"datagrid\"><table>"
+         champ +=   "   <thead><tr><th>Команда</th><th>Выполнено (%)</th><th>Очки</th><th>Сумма</th></tr></thead>"
+         odd = true
+         teams.each do |t|
+             p t
+             sum = db.execute("SELECT SUM(points) FROM points WHERE teamid=#{t[0]} AND week<=#{w}")[0]
+             if odd
+                 champ += "  <tr><td>#{t[3]}</td><td>#{t[2]}</td><td>#{t[1]}</td><td>#{sum[0]}</td></tr>"
+             else
+                 champ += "  <tr class=\"alt\"><td>#{t[3]}</td><td>#{t[2]}</td><td>#{t[1]}</td><td>#{sum[0]}</td></tr>"
+             end
+         end
+         champ +=   "   </tbody>"
+         champ +=   "</table>"
+         champ +=   "</div>"
+    end
+end
+
 File.open('html/index.html', 'w') { |f| f.write(index_erb.result) }
 File.open('html/rules.html', 'w') { |f| f.write(rules_erb.result) }
 
 data = ""
 runners = db.execute("SELECT * FROM runners ORDER BY runnername")
+teams = db.execute("SELECT * FROM teams")
 runners.each do |r|
     note = db.execute("SELECT title FROM titles WHERE runnerid=#{r[0]}").join("<br />")
     data = ""
