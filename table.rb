@@ -1,4 +1,5 @@
 #!/usr/bin/ruby -W0
+# coding: utf-8
 require 'sqlite3'
 require 'active_support'
 require 'active_support/core_ext'
@@ -39,10 +40,8 @@ users_erb = ERB.new(File.read('users.html.erb'))
 db = SQLite3::Database.new("2019.db")
 
 if now > STARTPROLOG and now < 7.days.after(CLOSEPROLOG)
-    prolog += "<center>\n"
     prolog += "<h1>Пролог (неделя 1)</h1>\n"
-    prolog += "</center>\n"
-    prolog += "<div class=\"datagrid\">\n"
+    prolog += "<div class=\"table__container\">\n"
     prolog += "<table>\n"
     prolog += "<thead><tr><th>Имя</th><th>Команда</th><th>Объемы 2018 (км/нед)</th><th>Результат (км)</th></tr></thead>\n"
     prolog += "<tbody>\n"
@@ -82,12 +81,8 @@ if now > STARTCHM
     w = Date.today.cweek
     p w
     teams = db.execute("SELECT teams.teamid, teamname, SUM(points) AS p FROM points, teams WHERE points.teamid=teams.teamid AND week<#{w} GROUP BY teams.teamid ORDER BY p DESC")
-    champ +=   "<center>"
     champ +=   "    <h1>Текущее положение команд</h1>"
-    champ +=   "    <br />"
-    champ +=   "    <br />"
-    champ +=   "</center>"
-    champ +=   "<div class=\"datagrid\"><table>"
+    champ +=   "<div class=\"table__container\"><table>"
     champ +=   "   <thead><tr><th>Команда</th><th>Очки</th></tr></thead>"
     odd = true
     teams.each do |t|
@@ -103,13 +98,9 @@ if now > STARTCHM
     champ +=   "</div>"
     champ +=   "<br />"
     teams = db.execute("SELECT teams.teamid, points, pcts, teamname  FROM points,teams WHERE points.teamid=teams.teamid AND week=#{w} ORDER BY points DESC")
-    champ +=   "<center>"
     champ +=   "    <h1>Предварительные результаты #{w} недели</h1>"
     champ +=   "    <!--a href=\"teams#{w}.html\">Подробнее</a-->"
-    champ +=   "    <br />"
-    champ +=   "    <br />"
-    champ +=   "</center>"
-    champ +=   "<div class=\"datagrid\"><table>"
+    champ +=   "<div class=\"table__container\"><table>"
     champ +=   "   <thead><tr><th>Команда</th><th>Выполнено (%)</th><th>Очки</th><th>Сумма</th></tr></thead>"
     odd = true
     teams.each do |t|
@@ -129,13 +120,9 @@ if now > STARTCHM
     [*STARTCHM.to_date.cweek..(Date.today.cweek-2)].reverse_each do |w|
          p w
          teams = db.execute("SELECT teams.teamid, points, pcts, teamname  FROM points,teams WHERE points.teamid=teams.teamid AND week=#{w} ORDER BY points")
-         champ +=   "<center>"
          champ +=   "    <h1>Результаты #{w} недели</h1>"
          champ +=   "    <!--a href=\"teams#{w}.html\">Подробнее</a-->"
-         champ +=   "    <br />"
-         champ +=   "    <br />"
-         champ +=   "</center>"
-         champ +=   "<div class=\"datagrid\"><table>"
+         champ +=   "<div class=\"table__container\"><table>"
          champ +=   "   <thead><tr><th>Команда</th><th>Выполнено (%)</th><th>Очки</th><th>Сумма</th></tr></thead>"
          odd = true
          teams.each do |t|
@@ -183,10 +170,8 @@ data += "<center>\n"
 data += "<h1>Команды и участники</h1>\n"
 data += "</center>\n"
 db.execute("SELECT * FROM teams ORDER BY teamid") do |t|
-    data += "<center>\n"
-    data += "<h2>#{t[1]}</h1>\n"
-    data += "</center>\n"
-    data += "<div class=\"datagrid\">\n"
+    data += "<h2 class=\"team__name\">#{t[1]}</h2>\n"
+    data += "<div class=\"table__container\">\n"
     data += "<table>\n"
     data += "<tbody>\n"
     data += "<thead><tr><th>Имя</th><th>Объемы 2018 (км/год)</th><th>Примечания</th></tr></thead>"
