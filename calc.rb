@@ -22,8 +22,8 @@ def calcweek (date)
     teams.each do |t|
         place = teams.index(t)+1
         points = 5*(TEAMS-place)
-        p          "INSERT OR IGNORE INTO points VALUES (#{t[0]}, #{week_number}, #{points}, #{t[2]})"
-        db.execute("INSERT OR IGNORE INTO points VALUES (#{t[0]}, #{week_number}, #{points}, #{t[2]})")
+        p          "INSERT OR REPLACE INTO points VALUES (#{t[0]}, #{week_number}, #{points}, #{t[2]})"
+        db.execute("INSERT OR REPLACE INTO points VALUES (#{t[0]}, #{week_number}, #{points}, #{t[2]})")
     end
 end
 
