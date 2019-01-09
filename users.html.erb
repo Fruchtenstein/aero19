@@ -28,13 +28,15 @@
 </div>
 </section><main class="main">
 <div class="main__content">
-<aside class="sidebar"><section class="users">
+<aside class="sidebar">
+  <section class="users">
   <ul class="users__list">
     <% runners.each do |runner| %>
     <li class="user"><a href="u<%= runner[0] %>.html" class="user__link"><%= runner[1] %></a></li>
     <%  end %>
 </ul>
-</section><section class="clubs">
+</section>
+<section class="clubs">
 <h3 class="clubs__title">
 <a class="clubs__title-link" href="http://aerobia.ru/my/clubs">Клубы</a>
 </h3>

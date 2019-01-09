@@ -45,9 +45,9 @@ if now > STARTPROLOG and now < 7.days.after(CLOSEPROLOG)
     prolog += "<table>\n"
     prolog += "<thead><tr><th>Имя</th><th>Команда</th><th>Объемы 2018 (км/нед)</th><th>Результат (км)</th></tr></thead>\n"
     prolog += "<tbody>\n"
-    
+
     teams = db.execute("SELECT * FROM teams")
-    
+
     odd = true
     runners = db.execute("SELECT runnerid,runnername,7*goal/365,teamid FROM runners")
     runners.each do |r|
@@ -72,7 +72,7 @@ if now > STARTPROLOG and now < 7.days.after(CLOSEPROLOG)
         end
         odd = !odd
     end
-    
+
     prolog += "</tbody>\n"
     prolog += "</table></div>\n"
 end
@@ -149,11 +149,9 @@ teams = db.execute("SELECT * FROM teams")
 runners.each do |r|
     note = db.execute("SELECT title FROM titles WHERE runnerid=#{r[0]}").join("<br />")
     data = ""
-    data += "<center>\n"
     data += "<h1>Карточка участника</h1>\n"
-    data += "</center>\n"
-    data += "<div class=\"datagrid\">\n"
-    data += "<table>\n"
+    data += "<div class=\"table__container\">\n"
+    data += "<table class=\"table-runner\">\n"
     data += "<tbody>\n"
     data += "<tr><td><b>Имя</b></td><td>#{r[1]}</td></tr>"
     data += "<tr><td><b>Команда</b></td><td>#{teams[r[2]-1][1]}</td></tr>"
