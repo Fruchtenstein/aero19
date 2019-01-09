@@ -12,7 +12,7 @@ def calcweek (date)
         num_of_runners = db.execute("SELECT COUNT(*) FROM runners WHERE teamid=#{t}")[0][0]
         sum_pct = 0
         db.execute("SELECT runnerid, goal*7/365.0 FROM runners WHERE teamid=#{t}") do |r|
-            dist = db.execute("SELECT COALESCE(SUM(distance),0) FROM log WHERE runnerid=#{r[0]} AND date>'#{date.beginning_of_week}' AND date<'#{date.end_of_week}'")[0][0]
+            dist = db.execute("SELECT COALESCE(SUM(distance),0) FROM log WHERE runnerid=#{r[0]} AND date>'#{date.beginning_of_week.iso8601}' AND date<'#{date.end_of_week.iso8601}'")[0][0]
             goal = r[1]
             sum_pct += (dist/goal)*100
         end
@@ -27,7 +27,21 @@ def calcweek (date)
     end
 end
 
+def calcprolog ()
+    db = SQLite3::Database.new("2019.db")
+    runners = db.execute("SELECT * FROM runners") 
+    runners.each do |r|
+        r << db.execute("SELECT COALESCE(SUM(distance),0) AS d FROM log WHERE runnerid=#{r[0]} AND date>'#{STARTPROLOG.iso8601}' AND date<'#{ENDPROLOG.iso8601}'")[0][0]
+    end
+    runners.sort! { |x,y| y[4] <=> x[4] }
+    p runners
+end
+
 now = Time.now.getutc
+
+if now.wday == DOW and now.to_date.cweek == 2
+    calcprolog
+end
 
 if now.wday < DOW and 1.week.ago.beginning_of_week >= STARTCHM and 1.week.ago.beginning_of_week <= ENDCHM
     p "do last week #{1.week.ago}"

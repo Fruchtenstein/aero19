@@ -40,7 +40,7 @@ db = SQLite3::Database.new("2019.db")
 
 if now > STARTPROLOG and now < 7.days.after(CLOSEPROLOG)
     prolog += "<center>\n"
-    prolog += "<h1>Пролог</h1>\n"
+    prolog += "<h1>Пролог (неделя 1)</h1>\n"
     prolog += "</center>\n"
     prolog += "<div class=\"datagrid\">\n"
     prolog += "<table>\n"
@@ -80,6 +80,7 @@ end
 
 if now > STARTCHM
     w = Date.today.cweek
+    p w
     teams = db.execute("SELECT teams.teamid, teamname, SUM(points) AS p FROM points, teams WHERE points.teamid=teams.teamid AND week<#{w} GROUP BY teams.teamid ORDER BY p DESC")
     champ +=   "<center>"
     champ +=   "    <h1>Текущее положение команд</h1>"
@@ -104,7 +105,7 @@ if now > STARTCHM
     teams = db.execute("SELECT teams.teamid, points, pcts, teamname  FROM points,teams WHERE points.teamid=teams.teamid AND week=#{w} ORDER BY points DESC")
     champ +=   "<center>"
     champ +=   "    <h1>Предварительные результаты #{w} недели</h1>"
-    champ +=   "    <a href=\"teams#{w}.html\">Подробнее</a>"
+    champ +=   "    <!--a href=\"teams#{w}.html\">Подробнее</a-->"
     champ +=   "    <br />"
     champ +=   "    <br />"
     champ +=   "</center>"
@@ -125,12 +126,12 @@ if now > STARTCHM
     champ +=   "</table>"
     champ +=   "</div>"
     champ +=   "<br />"
-    [*STARTCHM.to_date.cweek..(Date.today.cweek-1)].reverse_each do |w|
+    [*STARTCHM.to_date.cweek..(Date.today.cweek-2)].reverse_each do |w|
          p w
          teams = db.execute("SELECT teams.teamid, points, pcts, teamname  FROM points,teams WHERE points.teamid=teams.teamid AND week=#{w} ORDER BY points")
          champ +=   "<center>"
          champ +=   "    <h1>Результаты #{w} недели</h1>"
-         champ +=   "    <a href=\"teams#{w}.html\">Подробнее</a>"
+         champ +=   "    <!--a href=\"teams#{w}.html\">Подробнее</a-->"
          champ +=   "    <br />"
          champ +=   "    <br />"
          champ +=   "</center>"
