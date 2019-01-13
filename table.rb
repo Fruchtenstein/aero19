@@ -230,7 +230,7 @@ File.open("html/users.html", 'w') { |f| f.write(users_erb.result(binding)) }
          sum_pct = 0
          sum_goal = 0
          odd = true
-         runners = db.execute("SELECT * FROM runners WHERE teamid=#{t[0]}")
+         runners = db.execute("SELECT * FROM runners WHERE teamid=#{t[0]} ORDER BY goal DESC")
          runners.each do |r|
              dist = db.execute("SELECT COALESCE(SUM(distance),0) FROM log WHERE runnerid=#{r[0]} AND date>'#{bow.iso8601}' AND date<'#{eow.iso8601}'")[0][0]
              goal = 7*r[3]/365
