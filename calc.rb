@@ -4,15 +4,15 @@ require 'active_support'
 require 'active_support/core_ext'
 require_relative './config.rb'
 
-def calcweek (date)
-    week_number = date.cweek.to_i
+def calcweek (now)
+    week_number = now.to_date.cweek.to_i
     db = SQLite3::Database.new("2019.db")
     teams = []
     (1..TEAMS).each do |t|
         num_of_runners = db.execute("SELECT COUNT(*) FROM runners WHERE teamid=#{t}")[0][0]
         sum_pct = 0
         db.execute("SELECT runnerid, goal*7/365.0 FROM runners WHERE teamid=#{t}") do |r|
-            dist = db.execute("SELECT COALESCE(SUM(distance),0) FROM log WHERE runnerid=#{r[0]} AND date>'#{date.beginning_of_week.iso8601}' AND date<'#{date.end_of_week.iso8601}'")[0][0]
+            dist = db.execute("SELECT COALESCE(SUM(distance),0) FROM log WHERE runnerid=#{r[0]} AND date>'#{now.beginning_of_week.iso8601}' AND date<'#{now.end_of_week.iso8601}'")[0][0]
             goal = r[1]
             sum_pct += (dist/goal)*100
         end
@@ -59,6 +59,6 @@ end
 
 if now.beginning_of_week >= STARTCHM and now.beginning_of_week <= ENDCHM
     p "do this week #{now}"
-    calcweek(now.to_date)
+    calcweek(now)
 end
 

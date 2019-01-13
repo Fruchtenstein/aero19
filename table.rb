@@ -33,6 +33,7 @@ cup = ""
 
 index_erb = ERB.new(File.read('index.html.erb'))
 rules_erb = ERB.new(File.read('rules.html.erb'))
+teams_erb = ERB.new(File.read('teams.html.erb'))
 user_erb = ERB.new(File.read('u.html.erb'))
 users_erb = ERB.new(File.read('users.html.erb'))
 
@@ -206,3 +207,48 @@ db.execute("SELECT * FROM teams ORDER BY teamid") do |t|
     data += "<br />\n"
 end
 File.open("html/users.html", 'w') { |f| f.write(users_erb.result(binding)) }
+
+
+[*STARTCHM.to_date.cweek+1..(Date.today.cweek)].reverse_each do |w|
+     puts "teams#{w}...."
+     p w
+     bow = DateTime.parse(Date.commercial(2019,w).to_s).beginning_of_week
+     eow = DateTime.parse(Date.commercial(2019,w).to_s).end_of_week
+     p bow, eow
+     teams = db.execute("SELECT * FROM teams")
+     data = ""
+     db.execute("SELECT * FROM teams") do |t|
+         p t
+         data +=   "<center>\n"
+         data +=   "    <br />\n"
+         data +=   "    <br />\n"
+         data +=   "    <h1>#{t[1]}</h1>\n"
+         data +=   "</center>\n"
+         data +=   "<div class=\"datagrid\"><table>\n"
+         data +=   "   <thead><tr><th>Имя</th><th>Цель (км/нед)</th><th>Результат (км)</th><th>Выполнено (%)</th></tr></thead>\n"
+         sum_dist = 0
+         sum_pct = 0
+         sum_goal = 0
+         odd = true
+         runners = db.execute("SELECT * FROM runners WHERE teamid=#{t[0]}")
+         runners.each do |r|
+             dist = db.execute("SELECT COALESCE(SUM(distance),0) FROM log WHERE runnerid=#{r[0]} AND date>'#{bow.iso8601}' AND date<'#{eow.iso8601}'")[0][0]
+             goal = 7*r[3]/365
+             pct = (dist/goal)*100
+             sum_dist += dist
+             sum_pct += pct
+             sum_goal += goal
+             if odd
+                 data += "  <tr><td>#{r[1]}</td><td>#{goal.round(2)}</td><td>#{dist.round(2)}</td><td>#{pct.round(2)}</td></tr>\n"
+             else
+                 data += "  <tr class=\"alt\"><td>#{r[1]}</td><td>#{goal.round(2)}</td><td>#{dist.round(2)}</td><td>#{pct.round(2)}</td></tr>\n"
+             end
+             odd = !odd
+         end
+         data +=  "<tfoot><tr><td>Всего:</td><td>#{sum_goal.round(2)}</td><td>#{sum_dist.round(2)}</td><td>#{(sum_pct/runners.length).round(2)}</td></tr></tfoot>"
+#         data +=   "   </tbody>\n"
+         data +=   "</table>\n"
+         data +=   "</div>\n"
+     end
+     File.open("html/teams#{w}.html", 'w') { |f| f.write(teams_erb.result(binding)) }
+end
