@@ -209,7 +209,7 @@ end
 File.open("html/users.html", 'w') { |f| f.write(users_erb.result(binding)) }
 
 
-[*STARTCHM.to_date.cweek+1..(Date.today.cweek)].reverse_each do |w|
+[*STARTCHM.to_date.cweek..(Date.today.cweek)].reverse_each do |w|
      puts "teams#{w}...."
      p w
      bow = DateTime.parse(Date.commercial(2019,w).to_s).beginning_of_week
