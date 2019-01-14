@@ -22,19 +22,27 @@ def calcweek (date)
     teams.each do |t|
         place = teams.index(t)+1
         points = 5*(TEAMS-place)
-        p "INSERT OR REPLACE INTO points VALUES (#{t[0]}, #{week_number}, #{points}, #{t[2]})"
+        p          "INSERT OR IGNORE INTO points VALUES (#{t[0]}, #{week_number}, #{points}, #{t[2]})"
         db.execute("INSERT OR IGNORE INTO points VALUES (#{t[0]}, #{week_number}, #{points}, #{t[2]})")
     end
 end
 
 def calcprolog ()
     db = SQLite3::Database.new("2019.db")
+    teams = Array.new(TEAMS, 0)
     runners = db.execute("SELECT * FROM runners") 
     runners.each do |r|
-        r << db.execute("SELECT COALESCE(SUM(distance),0) AS d FROM log WHERE runnerid=#{r[0]} AND date>'#{STARTPROLOG.iso8601}' AND date<'#{ENDPROLOG.iso8601}'")[0][0]
+        r << db.execute("SELECT COALESCE(SUM(distance),0) AS d FROM log WHERE runnerid=#{r[0]} AND date>'#{STARTPROLOG.iso8601}' AND date<'#{ENDPROLOG.iso8601}' LIMIT 3")[0][0]
     end
+    p runners
     runners.sort! { |x,y| y[4] <=> x[4] }
     p runners
+    teams[runners[0][2]] += 20
+    teams[runners[1][2]] += 10
+    teams[runners[2][2]] += 5
+    teams.each_with_index do |t, i|
+        db.execute("INSERT OR REPLACE INTO points VALUES (#{i}, 1, #{t}, 0.0)")
+    end
 end
 
 now = Time.now.getutc

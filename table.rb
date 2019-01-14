@@ -81,7 +81,7 @@ end
 if now > STARTCHM
     w = Date.today.cweek
     p w
-    teams = db.execute("SELECT teams.teamid, teamname, SUM(points) AS p FROM points, teams WHERE points.teamid=teams.teamid AND week<#{w} GROUP BY teams.teamid ORDER BY p DESC")
+    teams = db.execute("SELECT teams.teamid, teamname, COALESCE(SUM(points),0) AS p FROM points, teams WHERE points.teamid=teams.teamid AND week<#{w} GROUP BY teams.teamid ORDER BY p DESC")
     champ +=   "<center>"
     champ +=   "    <h1>Текущее положение команд</h1>"
     champ +=   "    <br />"
@@ -126,9 +126,9 @@ if now > STARTCHM
     champ +=   "</table>"
     champ +=   "</div>"
     champ +=   "<br />"
-    [*STARTCHM.to_date.cweek..(Date.today.cweek-2)].reverse_each do |w|
+    [*STARTCHM.to_date.cweek+1..(Date.today.cweek-1)].reverse_each do |w|
          p w
-         teams = db.execute("SELECT teams.teamid, points, pcts, teamname  FROM points,teams WHERE points.teamid=teams.teamid AND week=#{w} ORDER BY points")
+         teams = db.execute("SELECT teams.teamid, points, pcts, teamname  FROM points,teams WHERE points.teamid=teams.teamid AND week=#{w} ORDER BY points DESC")
          champ +=   "<center>"
          champ +=   "    <h1>Результаты #{w} недели</h1>"
          champ +=   "    <!--a href=\"teams#{w}.html\">Подробнее</a-->"
