@@ -143,9 +143,9 @@ if now > STARTCHM
              p t
              sum = db.execute("SELECT SUM(points) FROM points WHERE teamid=#{t[0]} AND week<=#{w}")[0]
              if odd
-                 champ += "  <tr><td>#{t[3]}</td><td>#{t[2]}</td><td>#{t[1]}</td><td>#{sum[0]}</td></tr>"
+                 champ += "  <tr><td>#{t[3]}</td><td>#{t[2].round(2)}</td><td>#{t[1]}</td><td>#{sum[0]}</td></tr>"
              else
-                 champ += "  <tr class=\"alt\"><td>#{t[3]}</td><td>#{t[2]}</td><td>#{t[1]}</td><td>#{sum[0]}</td></tr>"
+                 champ += "  <tr class=\"alt\"><td>#{t[3]}</td><td>#{t[2].round(2)}</td><td>#{t[1]}</td><td>#{sum[0]}</td></tr>"
              end
              odd = !odd
          end
