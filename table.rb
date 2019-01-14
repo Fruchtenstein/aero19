@@ -127,7 +127,7 @@ if now > STARTCHM
     champ +=   "</table>"
     champ +=   "</div>"
     champ +=   "<br />"
-    [*STARTCHM.to_date.cweek+1..(Date.today.cweek-1)].reverse_each do |w|
+    [*STARTCHM.to_date.cweek..(Date.today.cweek-1)].reverse_each do |w|
          p w
          teams = db.execute("SELECT teams.teamid, points, pcts, teamname  FROM points,teams WHERE points.teamid=teams.teamid AND week=#{w} ORDER BY points DESC")
          champ +=   "<center>"
@@ -147,6 +147,7 @@ if now > STARTCHM
              else
                  champ += "  <tr class=\"alt\"><td>#{t[3]}</td><td>#{t[2]}</td><td>#{t[1]}</td><td>#{sum[0]}</td></tr>"
              end
+             odd = !odd
          end
          champ +=   "   </tbody>"
          champ +=   "</table>"
