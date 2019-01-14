@@ -76,7 +76,7 @@ users_erb = ERB.new(File.read('users.html.erb'))
 db = SQLite3::Database.new("2019.db")
 
 ### Process index.html
-if now > STARTPROLOG and now < 7.days.after(CLOSEPROLOG)
+if now > STARTPROLOG #and now < 7.days.after(CLOSEPROLOG)
     prolog += "<center>\n"
     prolog += "<h1>Пролог (неделя 1)</h1>\n"
     prolog += "</center>\n"
