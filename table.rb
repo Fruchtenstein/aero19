@@ -5,6 +5,42 @@ require 'active_support/core_ext'
 require 'erb'
 require_relative './config.rb'
 
+def printweek (w)
+    output = ""
+    db = SQLite3::Database.new("2019.db")
+    teams = db.execute("SELECT teams.teamid, points, pcts, teamname  FROM points,teams WHERE points.teamid=teams.teamid AND week=#{w} ORDER BY points DESC")
+    output +=   "<center>\n"
+    p "printweek: #{w}; #{Date.today.cweek}; #{Date.today.wday}; #{DOW}\n"
+    if w==Date.today.cweek or (w==Date.today.cweek-1 and Date.today.wday < DOW)
+        output +=   "    <h1>Предварительные результаты #{w} недели</h1>\n"
+    else
+        output +=   "    <h1>Результаты #{w} недели</h1>\n"
+    end
+    output +=   "    <!--a href=\"teams#{w}.html\">Подробнее</a-->\n"
+    output +=   "    <br />\n"
+    output +=   "    <br />\n"
+    output +=   "</center>\n"
+    output +=   "<div class=\"datagrid\"><table>\n"
+    output +=   "   <thead><tr><th>Команда</th><th>Выполнено (%)</th><th>Очки</th><th>Сумма</th></tr></thead>\n"
+    output += "<tbody>\n\n"
+    odd = true
+    teams.each do |t|
+        p t
+        sum = db.execute("SELECT SUM(points) FROM points WHERE teamid=#{t[0]} AND week<=#{w}")[0]
+        if odd
+            output += "  <tr><td>#{t[3]}</td><td>#{t[2].round(2)}</td><td>#{t[1]}</td><td>#{sum[0]}</td></tr>\n"
+        else
+            output += "  <tr class=\"alt\"><td>#{t[3]}</td><td>#{t[2].round(2)}</td><td>#{t[1]}</td><td>#{sum[0]}</td></tr>\n"
+        end
+        odd = !odd
+    end
+    output +=   "   </tbody>\n"
+    output +=   "</table>\n"
+    output +=   "</div>\n"
+    return output
+end
+
+
 $stdout.sync = true
 now = Time.now.getutc
 if now < STARTPROLOG or now > ENDCUP
@@ -39,6 +75,7 @@ users_erb = ERB.new(File.read('users.html.erb'))
 
 db = SQLite3::Database.new("2019.db")
 
+### Process index.html
 if now > STARTPROLOG and now < 7.days.after(CLOSEPROLOG)
     prolog += "<center>\n"
     prolog += "<h1>Пролог (неделя 1)</h1>\n"
@@ -82,82 +119,44 @@ end
 if now > STARTCHM
     w = Date.today.cweek
     p w
-    teams = db.execute("SELECT teams.teamid, teamname, COALESCE(SUM(points),0) AS p FROM points, teams WHERE points.teamid=teams.teamid AND week<#{w} GROUP BY teams.teamid ORDER BY p DESC")
-    champ +=   "<center>"
-    champ +=   "    <h1>Текущее положение команд</h1>"
-    champ +=   "    <br />"
-    champ +=   "    <br />"
-    champ +=   "</center>"
-    champ +=   "<div class=\"datagrid\"><table>"
-    champ +=   "   <thead><tr><th>Команда</th><th>Очки</th></tr></thead>"
+    if Date.today.wday < DOW
+        teams = db.execute("SELECT teams.teamid, teamname, COALESCE(SUM(points),0) AS p FROM points, teams WHERE points.teamid=teams.teamid AND week<#{w-1} GROUP BY teams.teamid ORDER BY p DESC")
+    else
+        teams = db.execute("SELECT teams.teamid, teamname, COALESCE(SUM(points),0) AS p FROM points, teams WHERE points.teamid=teams.teamid AND week<#{w} GROUP BY teams.teamid ORDER BY p DESC")
+    end
+    champ +=   "<center>\n"
+    champ +=   "    <h1>Текущее положение команд</h1>\n"
+    champ +=   "    <br />\n"
+    champ +=   "    <br />\n"
+    champ +=   "</center>\n"
+    champ +=   "<div class=\"datagrid\"><table>\n"
+    champ +=   "   <thead><tr><th>Команда</th><th>Очки</th></tr></thead>\n"
+    champ +=   "    <tbody>\n"
     odd = true
     teams.each do |t|
         if odd
-            champ += "  <tr><td>#{t[1]}</td><td>#{t[2]}</td></tr>"
+            champ += "  <tr><td>#{t[1]}</td><td>#{t[2]}</td></tr>\n"
         else
-            champ += "  <tr class=\"alt\"><td>#{t[1]}</td><td>#{t[2]}</td></tr>"
+            champ += "  <tr class=\"alt\"><td>#{t[1]}</td><td>#{t[2]}</td></tr>\n"
         end
         odd = !odd
     end
-    champ +=   "   </tbody>"
-    champ +=   "</table>"
-    champ +=   "</div>"
-    champ +=   "<br />"
-    teams = db.execute("SELECT teams.teamid, points, pcts, teamname  FROM points,teams WHERE points.teamid=teams.teamid AND week=#{w} ORDER BY points DESC")
-    champ +=   "<center>"
-    champ +=   "    <h1>Предварительные результаты #{w} недели</h1>"
-    champ +=   "    <!--a href=\"teams#{w}.html\">Подробнее</a-->"
-    champ +=   "    <br />"
-    champ +=   "    <br />"
-    champ +=   "</center>"
-    champ +=   "<div class=\"datagrid\"><table>"
-    champ +=   "   <thead><tr><th>Команда</th><th>Выполнено (%)</th><th>Очки</th><th>Сумма</th></tr></thead>"
-    odd = true
-    teams.each do |t|
-        p t
-        sum = db.execute("SELECT SUM(points) FROM points WHERE teamid=#{t[0]} AND week<=#{w}")[0]
-        if odd
-            champ += "  <tr><td>#{t[3]}</td><td>#{t[2].round(2)}</td><td>#{t[1]}</td><td>#{sum[0]}</td></tr>"
-        else
-            champ += "  <tr class=\"alt\"><td>#{t[3]}</td><td>#{t[2].round(2)}</td><td>#{t[1]}</td><td>#{sum[0]}</td></tr>"
-        end
-        odd = !odd
-    end
-    champ +=   "   </tbody>"
-    champ +=   "</table>"
-    champ +=   "</div>"
-    champ +=   "<br />"
+    champ +=   "   </tbody>\n"
+    champ +=   "</table>\n"
+    champ +=   "</div>\n"
+    champ +=   "<br />\n"
+    champ += printweek w
+    champ +=   "<br />\n"
     [*STARTCHM.to_date.cweek..(Date.today.cweek-1)].reverse_each do |w|
          p w
-         teams = db.execute("SELECT teams.teamid, points, pcts, teamname  FROM points,teams WHERE points.teamid=teams.teamid AND week=#{w} ORDER BY points DESC")
-         champ +=   "<center>"
-         champ +=   "    <h1>Результаты #{w} недели</h1>"
-         champ +=   "    <!--a href=\"teams#{w}.html\">Подробнее</a-->"
-         champ +=   "    <br />"
-         champ +=   "    <br />"
-         champ +=   "</center>"
-         champ +=   "<div class=\"datagrid\"><table>"
-         champ +=   "   <thead><tr><th>Команда</th><th>Выполнено (%)</th><th>Очки</th><th>Сумма</th></tr></thead>"
-         odd = true
-         teams.each do |t|
-             p t
-             sum = db.execute("SELECT SUM(points) FROM points WHERE teamid=#{t[0]} AND week<=#{w}")[0]
-             if odd
-                 champ += "  <tr><td>#{t[3]}</td><td>#{t[2].round(2)}</td><td>#{t[1]}</td><td>#{sum[0]}</td></tr>"
-             else
-                 champ += "  <tr class=\"alt\"><td>#{t[3]}</td><td>#{t[2].round(2)}</td><td>#{t[1]}</td><td>#{sum[0]}</td></tr>"
-             end
-             odd = !odd
-         end
-         champ +=   "   </tbody>"
-         champ +=   "</table>"
-         champ +=   "</div>"
+         champ += printweek w
     end
 end
 
 File.open('html/index.html', 'w') { |f| f.write(index_erb.result) }
 File.open('html/rules.html', 'w') { |f| f.write(rules_erb.result) }
 
+### Process users' personal pages
 data = ""
 runners = db.execute("SELECT * FROM runners ORDER BY runnername")
 teams = db.execute("SELECT * FROM teams")
@@ -180,6 +179,8 @@ runners.each do |r|
 
     File.open("html/u#{r[0]}.html", 'w') { |f| f.write(user_erb.result(binding)) }
 end
+
+### Process users.html
 data = ""
 data += "<center>\n"
 data += "<h1>Команды и участники</h1>\n"
@@ -191,7 +192,7 @@ db.execute("SELECT * FROM teams ORDER BY teamid") do |t|
     data += "<div class=\"datagrid\">\n"
     data += "<table>\n"
     data += "<tbody>\n"
-    data += "<thead><tr><th>Имя</th><th>Объемы 2018 (км/год)</th><th>Примечания</th></tr></thead>"
+    data += "<thead><tr><th>Имя</th><th>Объемы 2018 (км/год)</th><th>Примечания</th></tr></thead>\n"
     odd = true
     db.execute("SELECT * FROM runners WHERE teamid=#{t[0]} ORDER BY goal DESC") do |r|
         note = db.execute("SELECT title FROM titles WHERE runnerid=#{r[0]}").join("<br />")
@@ -209,6 +210,7 @@ db.execute("SELECT * FROM teams ORDER BY teamid") do |t|
 end
 File.open("html/users.html", 'w') { |f| f.write(users_erb.result(binding)) }
 
+### Process teams*.html
 [*STARTCHM.to_date.cweek..(Date.today.cweek)].reverse_each do |w|
      puts "teams#{w}...."
      p w
@@ -226,6 +228,7 @@ File.open("html/users.html", 'w') { |f| f.write(users_erb.result(binding)) }
          data +=   "</center>\n"
          data +=   "<div class=\"datagrid\"><table>\n"
          data +=   "   <thead><tr><th>Имя</th><th>Цель (км/нед)</th><th>Результат (км)</th><th>Выполнено (%)</th></tr></thead>\n"
+         data +=   "    <tbody>\n"
          sum_dist = 0
          sum_pct = 0
          sum_goal = 0
@@ -245,8 +248,8 @@ File.open("html/users.html", 'w') { |f| f.write(users_erb.result(binding)) }
              end
              odd = !odd
          end
-         data +=  "<tfoot><tr><td>Всего:</td><td>#{sum_goal.round(2)}</td><td>#{sum_dist.round(2)}</td><td>#{(sum_pct/runners.length).round(2)}</td></tr></tfoot>"
-#         data +=   "   </tbody>\n"
+         data +=  "<tfoot><tr><td>Всего:</td><td>#{sum_goal.round(2)}</td><td>#{sum_dist.round(2)}</td><td>#{(sum_pct/runners.length).round(2)}</td></tr></tfoot>\n"
+         data +=   "   </tbody>\n"
          data +=   "</table>\n"
          data +=   "</div>\n"
      end
