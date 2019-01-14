@@ -209,7 +209,6 @@ db.execute("SELECT * FROM teams ORDER BY teamid") do |t|
 end
 File.open("html/users.html", 'w') { |f| f.write(users_erb.result(binding)) }
 
-
 [*STARTCHM.to_date.cweek..(Date.today.cweek)].reverse_each do |w|
      puts "teams#{w}...."
      p w
@@ -240,9 +239,9 @@ File.open("html/users.html", 'w') { |f| f.write(users_erb.result(binding)) }
              sum_pct += pct
              sum_goal += goal
              if odd
-                 data += "  <tr><td>#{r[1]}</td><td>#{goal.round(2)}</td><td>#{dist.round(2)}</td><td>#{pct.round(2)}</td></tr>\n"
+                 data += "  <tr><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{goal.round(2)}</td><td>#{dist.round(2)}</td><td>#{pct.round(2)}</td></tr>\n"
              else
-                 data += "  <tr class=\"alt\"><td>#{r[1]}</td><td>#{goal.round(2)}</td><td>#{dist.round(2)}</td><td>#{pct.round(2)}</td></tr>\n"
+                 data += "  <tr class=\"alt\"><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{goal.round(2)}</td><td>#{dist.round(2)}</td><td>#{pct.round(2)}</td></tr>\n"
              end
              odd = !odd
          end
@@ -251,5 +250,16 @@ File.open("html/users.html", 'w') { |f| f.write(users_erb.result(binding)) }
          data +=   "</table>\n"
          data +=   "</div>\n"
      end
+     box  = "<nav class=\"sub\">\n"
+     box += "      <ul>\n"
+     (STARTCHM.to_date.cweek..Date.today.cweek).each do |wk|
+         if wk == w
+             box += "        <li class=\"active\"><span>#{wk} неделя</span></li>\n"
+         else
+             box += "        <li><a href=\"teams#{wk}.html\">#{wk} неделя</a></li>\n"
+         end
+     end
+     box += "      </ul>\n"
+     box += "    </nav>\n"
      File.open("html/teams#{w}.html", 'w') { |f| f.write(teams_erb.result(binding)) }
 end
