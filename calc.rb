@@ -53,7 +53,7 @@ end
 
 if now.wday < DOW and 1.week.ago.beginning_of_week >= STARTCHM and 1.week.ago.beginning_of_week <= ENDCHM
     p "do last week #{1.week.ago}"
-    calcweek(1.week.ago.to_date)
+    calcweek(1.week.ago)
 end
 
 
