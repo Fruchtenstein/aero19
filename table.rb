@@ -3,6 +3,7 @@ require 'sqlite3'
 require 'active_support'
 require 'active_support/core_ext'
 require 'erb'
+require 'gnuplot'
 require_relative './config.rb'
 
 def printweek (w)
@@ -266,3 +267,25 @@ File.open("html/users.html", 'w') { |f| f.write(users_erb.result(binding)) }
      box += "    </nav>\n"
      File.open("html/teams#{w}.html", 'w') { |f| f.write(teams_erb.result(binding)) }
 end
+
+(STARTCHM.to_date.cweek..Date.today.cweek).each do |w|
+    Gnuplot.open do |gp|
+        Gnuplot::Plot.new(gp) do |plot|
+            plot.terminal "png"
+            plot.output File.expand_path("../cup.png", __FILE__)
+            plot.title 'Кубок'
+	    plot.key "bmargin"
+            (1..TEAMS).each do |t|
+                team = db.execute("SELECT teamname FROM teams WHERE teamid=#{t}")[0][0]
+                a = db.execute("SELECT teamid, week, (SELECT SUM(points) FROM points WHERE week<=p.week AND teamid=p.teamid) FROM points p WHERE teamid=#{t}").map { |i| i[2] }
+                weeks = db.execute("SELECT DISTINCT week FROM points WHERE week <= #{w} ORDER BY week").map { |i| i[0] }
+		plot.data << Gnuplot::DataSet.new( a ) do |ds|
+		    ds.with = "lines"
+		    ds.linewidth = 3
+		    ds.title = team
+		end
+	    end
+	end
+    end
+end
+
