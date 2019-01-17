@@ -73,6 +73,7 @@ rules_erb = ERB.new(File.read('rules.html.erb'))
 teams_erb = ERB.new(File.read('teams.html.erb'))
 user_erb = ERB.new(File.read('u.html.erb'))
 users_erb = ERB.new(File.read('users.html.erb'))
+statistics_erb = ERB.new(File.read('statistics.html.erb'))
 
 db = SQLite3::Database.new("2019.db")
 
@@ -217,7 +218,7 @@ File.open("html/users.html", 'w') { |f| f.write(users_erb.result(binding)) }
      p w
      bow = DateTime.parse(Date.commercial(2019,w).to_s).beginning_of_week
      eow = DateTime.parse(Date.commercial(2019,w).to_s).end_of_week
-     p bow, eow
+     p bow.iso8601, eow.iso8601
      teams = db.execute("SELECT * FROM teams")
      data = ""
      db.execute("SELECT * FROM teams") do |t|
@@ -268,16 +269,57 @@ File.open("html/users.html", 'w') { |f| f.write(users_erb.result(binding)) }
      File.open("html/teams#{w}.html", 'w') { |f| f.write(teams_erb.result(binding)) }
 end
 
+### Process statistics*.html
+[*STARTCHM.to_date.cweek..(Date.today.cweek)].reverse_each do |w|
+     puts "statistics#{w}...."
+     p w
+     bow = DateTime.parse(Date.commercial(2019,w).to_s).beginning_of_week
+     eow = DateTime.parse(Date.commercial(2019,w).to_s).end_of_week
+     p bow.iso8601, eow.iso8601
+     data = ""
+     x = db.execute("SELECT runnername, MAX(d) FROM \
+                         (SELECT runnerid, SUM(distance) d FROM log \
+                                WHERE date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' GROUP BY runnerid) l, runners WHERE runners.runnerid=l.runnerid")[0]
+     p x
+     data +=   "<hr />\n"
+     data +=   "    <h2>Больше всех километров:\n"
+#     data +=   "</center>\n"
+     data +=   "    #{x[0]}: #{x[1].round(2)} км</h2>\n"
+
+     x = db.execute("SELECT runnername, MAX(d) FROM \
+                        (SELECT runnerid, 100*SUM(distance)/(SELECT 7*goal/365 FROM runners WHERE runnerid=log.runnerid) d \
+                                FROM log WHERE date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' GROUP BY runnerid) l, runners WHERE runners.runnerid=l.runnerid")[0]
+     p x
+     data +=   "<hr />\n"
+     data +=   "    <h2>Больше всех процентов:\n"
+#     data +=   "</center>\n"
+     data +=   "    #{x[0]}: #{x[1].round(2)}%</h2>\n"
+
+     box  = "<nav class=\"sub\">\n"
+     box += "      <ul>\n"
+     (STARTCHM.to_date.cweek..Date.today.cweek).each do |wk|
+         if wk == w
+             box += "        <li class=\"active\"><span>#{wk} неделя</span></li>\n"
+         else
+             box += "        <li><a href=\"statistics#{wk}.html\">#{wk} неделя</a></li>\n"
+         end
+     end
+     box += "      </ul>\n"
+     box += "    </nav>\n"
+     File.open("html/statistics#{w}.html", 'w') { |f| f.write(statistics_erb.result(binding)) }
+end
+
 (STARTCHM.to_date.cweek..Date.today.cweek).each do |w|
+    p "plot for week #{w}"
     Gnuplot.open do |gp|
         Gnuplot::Plot.new(gp) do |plot|
             plot.terminal "png"
-            plot.output File.expand_path("../cup.png", __FILE__)
+            plot.output File.expand_path("../html/cup#{w}.png", __FILE__)
             plot.title 'Кубок'
 	    plot.key "bmargin"
             (1..TEAMS).each do |t|
                 team = db.execute("SELECT teamname FROM teams WHERE teamid=#{t}")[0][0]
-                a = db.execute("SELECT teamid, week, (SELECT SUM(points) FROM points WHERE week<=p.week AND teamid=p.teamid) FROM points p WHERE teamid=#{t}").map { |i| i[2] }
+                a = db.execute("SELECT teamid, week, (SELECT SUM(points) FROM points WHERE week<=p.week AND teamid=p.teamid) FROM points p WHERE teamid=#{t} AND week <= #{w} ORDER BY week").map { |i| i[2] }
                 weeks = db.execute("SELECT DISTINCT week FROM points WHERE week <= #{w} ORDER BY week").map { |i| i[0] }
 		plot.data << Gnuplot::DataSet.new( a ) do |ds|
 		    ds.with = "lines"

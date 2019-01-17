@@ -27,9 +27,9 @@
         <nav>
             <ul>
                 <li class="workouts"><a href="index.html"><span></span>Таблица</a></li>
-                <li class="friends"><a href="teams<%=week%>.html"><span></span>Команды</a></li>
-                <li class="users"><a href="workouts.html"><span></span>Тренировки</a></li>
-                <li class="statistics active"><a href="statistics<%=week%>.html"><span></span>Статистика</a></li>
+                <li class="friends"><a href="teams<%=w%>.html"><span></span>Команды</a></li>
+                <li class="users"><a href="workouts.html"><span></span>Участники</a></li>
+                <li class="statistics active"><a href="statistics<%=w%>.html"><span></span>Статистика</a></li>
                 <li class="bests"><a href="rules.html"><span></span>Правила</a></li>
             </ul>
         </nav>
@@ -45,7 +45,9 @@
       <tr>
         <td class="aside">
           <!-- nav class="sub"><ul><li class="active"><span>Моя лента</span></li> <li><a href="http://aerobia.ru/favorites">Избранное</a></li></ul> <ul><li><a href="http://aerobia.ru/posts/best">Лучшее</a></li> <li><a href="http://aerobia.ru/posts">Общая лента</a></li></ul></nav -->
-$box
+
+          <%= box %>
+
           <aside class="clubs separate">
   <h3><a href="http://aerobia.ru/my/clubs">Клубы</a></h3>
   <ul>
@@ -67,7 +69,7 @@ $box
           <b><a href="http://aerobia.ru/clubs/190">Аэробия</a></b>
         </div>
       </li>
-      <li>
+      <!--li>
         <a href="http://aerobia.ru/clubs/417" class="avatar"><img src="assets/417_logo_team1_copy44_thumbnail.jpg" /></a>
         <div>
           <b><a href="http://aerobia.ru/clubs/417">Команда № 1</a></b>
@@ -114,14 +116,14 @@ $box
         <div>
           <b><a href="http://aerobia.ru/clubs/415">Барракуды</a></b>
         </div>
-      </li>
+      </li-->
 </aside>
 
 
         </td>
         <td>
             <br />
-            <center><img src="cup.png"></img></center>
+            <center><img src="cup<%=w%>.png"></img></center>
             <br />
             <%=data%>
 
