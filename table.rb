@@ -312,13 +312,22 @@ end
      p x
      data +=   "    <tr class='alt'><td>Больше всех процентов среди женщин</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[2].round(2)}%</td></tr>\n"
 
-     x = db.execute("SELECT log.runnerid, runnername, MAX(distance) FROM log, runners WHERE date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' AND runners.runnerid=log.runnerid")[0]
+     x = db.execute("SELECT log.runnerid, runnername, MAX(distance), runid FROM log, runners WHERE date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' AND runners.runnerid=log.runnerid")[0]
      p x
-     data +=   "    <tr><td>Самая длинная тренировка</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[2].round(2)} км</td></tr>\n"
+     data +=   "    <tr><td>Самая длинная тренировка</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td><a href='http://aerobia.ru/users/#{x[0]}/workouts/#{x[3]}'>#{x[2].round(2)} км</a></td></tr>\n"
 
-     x = db.execute("SELECT log.runnerid, runnername, MAX(distance) FROM log, runners WHERE date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' AND runners.runnerid=log.runnerid AND sex=0")[0]
+     x = db.execute("SELECT log.runnerid, runnername, MAX(distance), runid FROM log, runners WHERE date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' AND runners.runnerid=log.runnerid AND sex=0")[0]
      p x
-     data +=   "    <tr class='alt'><td>Самая длинная тренировка у женщин</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[2].round(2)} км</td></tr>\n"
+     data +=   "    <tr class='alt'><td>Самая длинная тренировка у женщин</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td><a href='http://aerobia.ru/users/#{x[0]}/workouts/#{x[3]}'>#{x[2].round(2)} км</a></td></tr>\n"
+
+     x = db.execute("SELECT log.runnerid, runnername, strftime('%M:%S',MIN(time/distance),'unixepoch'), runid, distance FROM log JOIN runners ON log.runnerid=runners.runnerid WHERE date>'#{bow.iso8601}' AND date<'#{eow.iso8601}'")[0]
+     p x
+     data +=   "    <tr><td>Самая быстрая тренировка</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td><a href='http://aerobia.ru/users/#{x[0]}/workouts/#{x[3]}'>#{x[2]} мин/км (#{x[4].round(2)} км)</a></td></tr>\n"
+
+     x = db.execute("SELECT log.runnerid, runnername, strftime('%M:%S',MIN(time/distance),'unixepoch'), runid, distance FROM log JOIN runners ON log.runnerid=runners.runnerid WHERE date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' AND sex=0")[0]
+     p x
+     data +=   "    <tr><td>Самая быстрая тренировка у женщин</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td><a href='http://aerobia.ru/users/#{x[0]}/workouts/#{x[3]}'>#{x[2]} мин/км (#{x[4].round(2)} км)</a></td></tr>\n"
+
 
      data +=   "   </tbody>\n"
      data +=   "</table>\n"
