@@ -121,7 +121,7 @@ end
 if now > STARTCHM
     w = Date.today.cweek
     p w
-    if Date.today.wday < DOW
+    if Date.today.wday.between?(1, DOW-1)
         teams = db.execute("SELECT teams.teamid, teamname, COALESCE(SUM(points),0) AS p FROM points, teams WHERE points.teamid=teams.teamid AND week<#{w-1} GROUP BY teams.teamid ORDER BY p DESC")
     else
         teams = db.execute("SELECT teams.teamid, teamname, COALESCE(SUM(points),0) AS p FROM points, teams WHERE points.teamid=teams.teamid AND week<#{w} GROUP BY teams.teamid ORDER BY p DESC")
