@@ -12,7 +12,7 @@ def printweek (w)
     teams = db.execute("SELECT teams.teamid, points, pcts, teamname  FROM points,teams WHERE points.teamid=teams.teamid AND week=#{w} ORDER BY points DESC")
     output +=   "<center>\n"
     p "printweek: #{w}; #{Date.today.cweek}; #{Date.today.wday}; #{DOW}\n"
-    if w==Date.today.cweek or (w==Date.today.cweek-1 and Date.today.wday < DOW)
+    if w==Date.today.cweek or (w==Date.today.cweek-1 and Date.today.wday > 0 and Date.today.wday < DOW)
         output +=   "    <h1>Предварительные результаты #{w} недели</h1>\n"
     else
         output +=   "    <h1>Результаты #{w} недели</h1>\n"
