@@ -12,7 +12,7 @@ def printweek (w)
     teams = db.execute("SELECT teams.teamid, points, pcts, teamname  FROM points,teams WHERE points.teamid=teams.teamid AND week=#{w} ORDER BY points DESC")
     output +=   "<center>\n"
     p "printweek: #{w}; #{Date.today.cweek}; #{Date.today.wday}; #{DOW}\n"
-    if w==Date.today.cweek or (w==Date.today.cweek-1 and Date.today.wday > 0 and Date.today.wday < DOW)
+    if w==Date.today.cweek or (w==Date.today.cweek-1 and Date.today.wday.between?(1, DOW-1))
         output +=   "    <h1>Предварительные результаты #{w} недели</h1>\n"
     else
         output +=   "    <h1>Результаты #{w} недели</h1>\n"
@@ -290,6 +290,9 @@ end
                          (SELECT runnerid, SUM(distance) d FROM log \
                                 WHERE date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' GROUP BY runnerid) l, runners WHERE runners.runnerid=l.runnerid")[0]
      p x
+     x[0] = x[0] || 0
+     x[1] = x[1] || ''
+     x[2] = x[2] || 0
 #     data +=   "</center>\n"
      data +=   "    <tr><td>Больше всех километров</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[2].round(2)} км</td></tr>\n"
 
@@ -297,6 +300,9 @@ end
                          (SELECT runnerid, SUM(distance) d FROM log \
                                 WHERE date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' GROUP BY runnerid) l, runners WHERE runners.runnerid=l.runnerid AND sex=0")[0]
      p x
+     x[0] = x[0] || 0
+     x[1] = x[1] || ''
+     x[2] = x[2] || 0
 #     data +=   "</center>\n"
      data +=   "    <tr class='alt'><td>Больше всех километров среди женщин</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[2].round(2)} км</td></tr>\n"
 
@@ -304,36 +310,67 @@ end
                         (SELECT runnerid, 100*SUM(distance)/(SELECT 7*goal/365 FROM runners WHERE runnerid=log.runnerid) d \
                                 FROM log WHERE date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' GROUP BY runnerid) l, runners WHERE runners.runnerid=l.runnerid")[0]
      p x
+     x[0] = x[0] || 0
+     x[1] = x[1] || ''
+     x[2] = x[2] || 0
      data +=   "    <tr><td>Больше всех процентов</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[2].round(2)}%</td></tr>\n"
 
      x = db.execute("SELECT l.runnerid, runnername, MAX(d) FROM \
                         (SELECT runnerid, 100*SUM(distance)/(SELECT 7*goal/365 FROM runners WHERE runnerid=log.runnerid) d \
                                 FROM log WHERE date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' GROUP BY runnerid) l, runners WHERE runners.runnerid=l.runnerid AND sex=0")[0]
      p x
+     x[0] = x[0] || 0
+     x[1] = x[1] || ''
+     x[2] = x[2] || 0
      data +=   "    <tr class='alt'><td>Больше всех процентов среди женщин</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[2].round(2)}%</td></tr>\n"
 
      x = db.execute("SELECT log.runnerid, runnername, MAX(distance), runid FROM log, runners WHERE date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' AND runners.runnerid=log.runnerid")[0]
      p x
+     x[0] = x[0] || 0
+     x[1] = x[1] || ''
+     x[2] = x[2] || 0
      data +=   "    <tr><td>Самая длинная тренировка</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td><a href='http://aerobia.ru/users/#{x[0]}/workouts/#{x[3]}'>#{x[2].round(2)} км</a></td></tr>\n"
 
      x = db.execute("SELECT log.runnerid, runnername, MAX(distance), runid FROM log, runners WHERE date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' AND runners.runnerid=log.runnerid AND sex=0")[0]
      p x
+     x[0] = x[0] || 0
+     x[1] = x[1] || ''
+     x[2] = x[2] || 0
+     x[3] = x[3] || 0
      data +=   "    <tr class='alt'><td>Самая длинная тренировка у женщин</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td><a href='http://aerobia.ru/users/#{x[0]}/workouts/#{x[3]}'>#{x[2].round(2)} км</a></td></tr>\n"
 
      x = db.execute("SELECT log.runnerid, runnername, strftime('%M:%S',MIN(time/distance),'unixepoch'), runid, distance FROM log JOIN runners ON log.runnerid=runners.runnerid WHERE date>'#{bow.iso8601}' AND date<'#{eow.iso8601}'")[0]
      p x
+     x[0] = x[0] || 0
+     x[1] = x[1] || ''
+     x[2] = x[2] || 0
+     x[3] = x[3] || 0
+     x[4] = x[4] || 0
      data +=   "    <tr><td>Самая быстрая тренировка</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td><a href='http://aerobia.ru/users/#{x[0]}/workouts/#{x[3]}'>#{x[2]} мин/км (#{x[4].round(2)} км)</a></td></tr>\n"
 
      x = db.execute("SELECT log.runnerid, runnername, strftime('%M:%S',MIN(time/distance),'unixepoch'), runid, distance FROM log JOIN runners ON log.runnerid=runners.runnerid WHERE date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' AND sex=0")[0]
      p x
+     x[0] = x[0] || 0
+     x[1] = x[1] || ''
+     x[2] = x[2] || 0
+     x[3] = x[3] || 0
+     x[4] = x[4] || 0
      data +=   "    <tr><td>Самая быстрая тренировка у женщин</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td><a href='http://aerobia.ru/users/#{x[0]}/workouts/#{x[3]}'>#{x[2]} мин/км (#{x[4].round(2)} км)</a></td></tr>\n"
 
      x = db.execute("SELECT l.runnerid, runnername, strftime('%M:%S',MIN(t/d),'unixepoch') FROM (SELECT runnerid, SUM(time) t, SUM(distance) d FROM log WHERE date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' GROUP BY runnerid) l, runners WHERE runners.runnerid=l.runnerid")[0]
      p x
+     x[0] = x[0] || 0
+     x[1] = x[1] || ''
+     x[2] = x[2] || 0
+     x[3] = x[3] || 0
      data +=   "    <tr><td>Самая быстрый средний темп</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[2]} мин/км</td></tr>\n"
 
      x = db.execute("SELECT l.runnerid, runnername, strftime('%M:%S',MIN(t/d),'unixepoch') FROM (SELECT runnerid, SUM(time) t, SUM(distance) d FROM log WHERE date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' GROUP BY runnerid) l, runners WHERE runners.runnerid=l.runnerid AND sex=0")[0]
      p x
+     x[0] = x[0] || 0
+     x[1] = x[1] || ''
+     x[2] = x[2] || 0
+     x[3] = x[3] || 0
      data +=   "    <tr><td>Самая быстрый средний темп у женщин</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[2]} мин/км</td></tr>\n"
 
      data +=   "   </tbody>\n"
