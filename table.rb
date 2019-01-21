@@ -400,10 +400,16 @@ end
             plot.output File.expand_path("../html/cup#{w}.png", __FILE__)
             plot.title 'Кубок'
 	    plot.key "bmargin"
+            weeks = db.execute("SELECT DISTINCT week FROM points WHERE week <= #{w} ORDER BY week").map { |i| i[0] }
+            plot.xrange "[1:#{weeks[-1]}]"
+            plot.xlabel 'Недели'
+            plot.ylabel 'Очки'
+            plot.ytics ''
+            plot.grid 'y'
             (1..TEAMS).each do |t|
                 team = db.execute("SELECT teamname FROM teams WHERE teamid=#{t}")[0][0]
-                a = db.execute("SELECT teamid, week, (SELECT SUM(points) FROM points WHERE week<=p.week AND teamid=p.teamid) FROM points p WHERE teamid=#{t} AND week <= #{w} ORDER BY week").map { |i| i[2] }
-                weeks = db.execute("SELECT DISTINCT week FROM points WHERE week <= #{w} ORDER BY week").map { |i| i[0] }
+                a = [0] + db.execute("SELECT teamid, week, (SELECT SUM(points) FROM points WHERE week<=p.week AND teamid=p.teamid) FROM points p WHERE teamid=#{t} AND week <= #{w} ORDER BY week").map { |i| i[2] }
+                p weeks, a
 		plot.data << Gnuplot::DataSet.new( a ) do |ds|
 		    ds.with = "lines"
 		    ds.linewidth = 3
