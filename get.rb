@@ -26,7 +26,7 @@ if now < STARTPROLOG or now > CLOSECUP
     exit
 end
 if now.wday.between?(1,DOW-1)
-    getstart = 1.week.ago.beginning_of_week
+    getstart = 1.week.ago.getutc.beginning_of_week
 else
     getstart = now.beginning_of_week
 end
@@ -45,7 +45,7 @@ db.execute("DELETE FROM log WHERE date>'#{getstart.iso8601}' and date<'#{getend.
 runners = []
 db.execute("SELECT * FROM runners") do |r|
     rid, rname, tid, goal = r
-    [1.month.ago, now].each do |m|
+    [1.month.ago.getutc, now].each do |m|
         url = "http://aerobia.ru/api/users/#{rid}/calendar/#{m.year}/#{m.month.to_s.rjust(2,'0')}"
         begin
             retries ||= 0

@@ -11,6 +11,7 @@ def printweek (w)
     db = SQLite3::Database.new("2019.db")
     teams = db.execute("SELECT teams.teamid, points, pcts, teamname  FROM points,teams WHERE points.teamid=teams.teamid AND week=#{w} ORDER BY points DESC")
     output +=   "<center>\n"
+    output +=   "    <br />\n"
     p "printweek: #{w}; #{Date.today.cweek}; #{Date.today.wday}; #{DOW}\n"
     if w==Date.today.cweek or (w==Date.today.cweek-1 and Date.today.wday.between?(1, DOW-1))
         output +=   "    <h1>Предварительные результаты #{w} недели</h1>\n"
@@ -18,7 +19,6 @@ def printweek (w)
         output +=   "    <h1>Результаты #{w} недели</h1>\n"
     end
     output +=   "    <!--a href=\"teams#{w}.html\">Подробнее</a-->\n"
-    output +=   "    <br />\n"
     output +=   "    <br />\n"
     output +=   "</center>\n"
     output +=   "<div class=\"datagrid\"><table>\n"
@@ -49,7 +49,7 @@ if now < STARTPROLOG or now > ENDCUP
     exit
 end
 if now.wday.between?(1,DOW-1)
-    getstart = 1.week.ago.beginning_of_week
+    getstart = 1.week.ago.getutc.beginning_of_week
 else
     getstart = now.beginning_of_week
 end
@@ -127,8 +127,8 @@ if now > STARTCHM
         teams = db.execute("SELECT teams.teamid, teamname, COALESCE(SUM(points),0) AS p FROM points, teams WHERE points.teamid=teams.teamid AND week<#{w} GROUP BY teams.teamid ORDER BY p DESC")
     end
     champ +=   "<center>\n"
-    champ +=   "    <h1>Текущее положение команд</h1>\n"
     champ +=   "    <br />\n"
+    champ +=   "    <h1>Текущее положение команд</h1>\n"
     champ +=   "    <br />\n"
     champ +=   "</center>\n"
     champ +=   "<div class=\"datagrid\"><table>\n"

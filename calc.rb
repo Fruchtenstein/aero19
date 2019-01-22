@@ -51,7 +51,7 @@ if now.wday == DOW and now.to_date.cweek == 2
     calcprolog
 end
 
-if now.wday.between?(1, DOW-1) and 1.week.ago.beginning_of_week >= STARTCHM and 1.week.ago.beginning_of_week <= ENDCHM
+if now.wday.between?(1, DOW-1) and 1.week.ago.getutc.beginning_of_week >= STARTCHM and 1.week.ago.getutc.beginning_of_week <= ENDCHM
     p "do last week #{1.week.ago}"
     calcweek(1.week.ago)
 end
