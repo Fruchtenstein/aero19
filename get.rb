@@ -74,9 +74,10 @@ db.execute("SELECT * FROM runners") do |r|
 #        File.open('calendar.xml', 'a') {|f| f.write(resp.content) }
         runs = x.xpath("//r")
         runs.each do |r|
+            p r
             if (r['start_at'] >= getstart) and (r['start_at'] <= getend)
                 if ['Бег', 'Спортивное ориентирование', 'Беговая дорожка'].include? r["sport"]
-                    sql = "INSERT OR REPLACE INTO log VALUES(#{r['id']}, #{rid}, '#{r['start_at']}', #{r['distance']}, #{r['duration']}, '#{r['sport']}')"
+                    sql = "INSERT OR REPLACE INTO log VALUES(#{r['id']}, #{rid}, '#{r['start_at']}', #{r['distance']}, #{r['duration'].to_i}, '#{r['sport']}')"
                     p sql
                     db.execute(sql)
                 end
