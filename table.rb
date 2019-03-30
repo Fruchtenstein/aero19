@@ -241,13 +241,13 @@ runners.each do |r|
             plot.data << Gnuplot::DataSet.new( a ) do |ds|
                 ds.with = "lines lt rgb \"red\""
                 ds.linewidth = 2
-                ds.title = r[1]
+                ds.title = r[1]+"="+a[-1].round(2).to_s+" км"
             end
-            norm = (7*r[3]/365).round(2).to_s
-            plot.data << Gnuplot::DataSet.new(norm+"*x") do |ds|
+            norm = (7*r[3]/365).round(2)
+            plot.data << Gnuplot::DataSet.new(norm.to_s+"*x") do |ds|
                 ds.with = "lines lt rgb \"blue\""
                 ds.linewidth = 1
-                ds.title = "Норма=#{norm} км"
+                ds.title = "Норма=#{(norm*(a.length-1)).round(2)} км"
             end
 	end
     end
