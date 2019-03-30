@@ -200,6 +200,42 @@ runners.each do |r|
                 d = db.execute("SELECT SUM(distance) FROM log WHERE runnerid=#{r[0]} AND date>'#{bow}' AND date<'#{eow}'")[0][0]
                 a += d.nil?? [0] : [d]
             end
+            norm = (7*r[3]/365).round(2)
+            ymax = [a.max*1.1, norm*1.1].max
+            plot.yrange "[0:#{ymax}]"
+            p "+++++ #{r[0]} #{r[1]} ",weeks, a
+            plot.data << Gnuplot::DataSet.new( a ) do |ds|
+                ds.with = "lines lt rgb \"red\""
+                ds.linewidth = 2
+                ds.title = r[1]
+            end
+            plot.data << Gnuplot::DataSet.new(norm.to_s) do |ds|
+                ds.with = "lines lt rgb \"blue\""
+                ds.linewidth = 1
+                ds.title = "Норма=#{norm.to_s} км"
+            end
+	end
+    end
+    Gnuplot.open do |gp|
+        Gnuplot::Plot.new(gp) do |plot|
+            p "----------------- norm plot"
+            plot.terminal "png"
+            plot.output File.expand_path("../html/w#{r[0]}.png", __FILE__)
+            plot.title "Выполнение нормы"
+	    plot.key "bmargin"
+            weeks = [*1..(Date.today.cweek-1)]
+            plot.xrange "[1:#{weeks[-1]}]"
+            plot.xlabel 'Недели'
+            plot.ylabel 'Км'
+            plot.ytics ''
+            plot.grid 'y'
+            a = [0]
+            weeks.each do |w|
+                bow = DateTime.parse(Date.commercial(2019,w).to_s).beginning_of_week.iso8601
+                eow = DateTime.parse(Date.commercial(2019,w).to_s).end_of_week.iso8601
+                d = db.execute("SELECT SUM(distance) FROM log WHERE runnerid=#{r[0]} AND date<'#{eow}'")[0][0]
+                a += d.nil?? [0] : [d]
+            end
             plot.yrange "[0:#{a.max*1.1}]"
             p "+++++ #{r[0]} #{r[1]} ",weeks, a
             plot.data << Gnuplot::DataSet.new( a ) do |ds|
@@ -207,7 +243,7 @@ runners.each do |r|
                 ds.linewidth = 2
                 ds.title = r[1]
             end
-            norm = (7*r[3]/365).round(2).to_s
+            norm = (7*r[3]/365).round(2).to_s+"*x"
             plot.data << Gnuplot::DataSet.new(norm) do |ds|
                 ds.with = "lines lt rgb \"blue\""
                 ds.linewidth = 1
