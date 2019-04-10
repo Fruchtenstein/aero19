@@ -180,6 +180,77 @@ runners.each do |r|
     data += "</table>\n"
 
     File.open("html/u#{r[0]}.html", 'w') { |f| f.write(user_erb.result(binding)) }
+
+    Gnuplot.open do |gp|
+        Gnuplot::Plot.new(gp) do |plot|
+            plot.terminal "png"
+            plot.output File.expand_path("../html/u#{r[0]}.png", __FILE__)
+            plot.title "Километраж по неделям"
+	    plot.key "bmargin"
+            weeks = [*1..(Date.today.cweek-1)]
+            plot.xrange "[1:#{weeks[-1]}]"
+            plot.xlabel 'Недели'
+            plot.ylabel 'Км'
+            plot.ytics ''
+            plot.grid 'y'
+            a = [0]
+            weeks.each do |w|
+                bow = DateTime.parse(Date.commercial(2019,w).to_s).beginning_of_week.iso8601
+                eow = DateTime.parse(Date.commercial(2019,w).to_s).end_of_week.iso8601
+                d = db.execute("SELECT SUM(distance) FROM log WHERE runnerid=#{r[0]} AND date>'#{bow}' AND date<'#{eow}'")[0][0]
+                a += d.nil?? [0] : [d]
+            end
+            norm = (7*r[3]/365).round(2)
+            ymax = [a.max*1.1, norm*1.1].max
+            plot.yrange "[0:#{ymax}]"
+            p "+++++ #{r[0]} #{r[1]} ",weeks, a
+            plot.data << Gnuplot::DataSet.new( a ) do |ds|
+                ds.with = "lines lt rgb \"red\""
+                ds.linewidth = 2
+                ds.title = r[1]
+            end
+            plot.data << Gnuplot::DataSet.new(norm.to_s) do |ds|
+                ds.with = "lines lt rgb \"blue\""
+                ds.linewidth = 1
+                ds.title = "Норма=#{norm.to_s} км"
+            end
+	end
+    end
+    Gnuplot.open do |gp|
+        Gnuplot::Plot.new(gp) do |plot|
+            p "----------------- norm plot"
+            plot.terminal "png"
+            plot.output File.expand_path("../html/w#{r[0]}.png", __FILE__)
+            plot.title "Выполнение нормы"
+	    plot.key "bmargin"
+            weeks = [*1..(Date.today.cweek-1)]
+            plot.xrange "[1:#{weeks[-1]}]"
+            plot.xlabel 'Недели'
+            plot.ylabel 'Км'
+            plot.ytics ''
+            plot.grid 'y'
+            a = [0]
+            weeks.each do |w|
+                bow = DateTime.parse(Date.commercial(2019,w).to_s).beginning_of_week.iso8601
+                eow = DateTime.parse(Date.commercial(2019,w).to_s).end_of_week.iso8601
+                d = db.execute("SELECT SUM(distance) FROM log WHERE runnerid=#{r[0]} AND date<'#{eow}'")[0][0]
+                a += d.nil?? [0] : [d]
+            end
+            plot.yrange "[0:#{a.max*1.1}]"
+            p "+++++ #{r[0]} #{r[1]} ",weeks, a
+            plot.data << Gnuplot::DataSet.new( a ) do |ds|
+                ds.with = "lines lt rgb \"red\""
+                ds.linewidth = 2
+                ds.title = r[1]+"="+a[-1].round(2).to_s+" км"
+            end
+            norm = (7*r[3]/365).round(2)
+            plot.data << Gnuplot::DataSet.new(norm.to_s+"*x") do |ds|
+                ds.with = "lines lt rgb \"blue\""
+                ds.linewidth = 1
+                ds.title = "Норма=#{(norm*(a.length-1)).round(2)} км"
+            end
+	end
+    end
 end
 
 ### Process users.html
