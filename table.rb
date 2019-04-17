@@ -315,9 +315,9 @@ File.open("html/users.html", 'w') { |f| f.write(users_erb.result(binding)) }
              sum_pct += pct
              sum_goal += goal
              if odd
-                 data += "  <tr><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{goal.round(2)}</td><td>#{dist.round(2)}</td><td>#{pct.round(2)}</td></tr>\n"
+                 data += "  <tr><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{goal.round(2)}</td><td><a href=\"http://aerobia.ru/users/#{r[0]}\">#{dist.round(2)}</a></td><td>#{pct.round(2)}</td></tr>\n"
              else
-                 data += "  <tr class=\"alt\"><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{goal.round(2)}</td><td>#{dist.round(2)}</td><td>#{pct.round(2)}</td></tr>\n"
+                 data += "  <tr class=\"alt\"><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{goal.round(2)}</td><td><a href=\"http://aerobia.ru/users/#{r[0]}\">#{dist.round(2)}</a></td><td>#{pct.round(2)}</td></tr>\n"
              end
              odd = !odd
          end
