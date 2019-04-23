@@ -1,4 +1,5 @@
 #!/usr/bin/ruby -W0
+# coding: utf-8
 require 'sqlite3'
 require 'active_support'
 require 'active_support/core_ext'
@@ -447,7 +448,7 @@ end
      x[1] = x[1] || ''
      x[2] = x[2] || 0
      x[3] = x[3] || ''
-     data +=   "    <tr><td>Самая быстрый средний темп</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[3]}</td><td>#{x[2]} мин/км</td></tr>\n"
+     data +=   "    <tr><td>Самый быстрый средний темп</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[3]}</td><td>#{x[2]} мин/км</td></tr>\n"
 
      x = db.execute("SELECT l.runnerid, runnername, strftime('%M:%S',MIN(t/d),'unixepoch'), teamname FROM (SELECT runnerid, SUM(time) t, SUM(distance) d FROM log WHERE date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' AND time>0 GROUP BY runnerid) l, runners, teams WHERE runners.runnerid=l.runnerid AND sex=0 AND teams.teamid=runners.teamid")[0]
      p x
@@ -455,7 +456,43 @@ end
      x[1] = x[1] || ''
      x[2] = x[2] || 0
      x[3] = x[3] || ''
-     data +=   "    <tr class='alt'><td>Самая быстрый средний темп у женщин</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[3]}</td><td>#{x[2]} мин/км</td></tr>\n"
+     data +=   "    <tr class='alt'><td>Самый быстрый средний темп у женщин</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[3]}</td><td>#{x[2]} мин/км</td></tr>\n"
+
+     x = db.execute("SELECT log.runnerid, runnername, strftime('%M:%S',MAX(time/distance),'unixepoch'), runid, distance, teamname FROM log, runners, teams WHERE log.runnerid=runners.runnerid AND date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' AND teams.teamid=runners.teamid AND time>0")[0]
+     p x
+     x[0] = x[0] || 0
+     x[1] = x[1] || ''
+     x[2] = x[2] || 0
+     x[3] = x[3] || 0
+     x[4] = x[4] || 0
+     x[5] = x[5] || ''
+     data +=   "    <tr><td>Самая медленная тренировка</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[5]}</td><td><a href='http://aerobia.ru/users/#{x[0]}/workouts/#{x[3]}'>#{x[2]} мин/км (#{x[4].round(2)} км)</a></td></tr>\n"
+
+     x = db.execute("SELECT log.runnerid, runnername, strftime('%M:%S',MAX(time/distance),'unixepoch'), runid, distance, teamname FROM log, runners, teams WHERE log.runnerid=runners.runnerid AND date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' AND sex=0 AND teams.teamid=runners.teamid AND time>0")[0]
+     p x
+     x[0] = x[0] || 0
+     x[1] = x[1] || ''
+     x[2] = x[2] || 0
+     x[3] = x[3] || 0
+     x[4] = x[4] || 0
+     x[5] = x[5] || ''
+     data +=   "    <tr class='alt'><td>Самая медленная тренировка у женщин</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[5]}</td><td><a href='http://aerobia.ru/users/#{x[0]}/workouts/#{x[3]}'>#{x[2]} мин/км (#{x[4].round(2)} км)</a></td></tr>\n"
+
+     x = db.execute("SELECT l.runnerid, runnername, strftime('%M:%S',MAX(t/d),'unixepoch'), teamname FROM (SELECT runnerid, SUM(time) t, SUM(distance) d FROM log WHERE date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' AND time>0 GROUP BY runnerid) l, runners, teams WHERE runners.runnerid=l.runnerid AND teams.teamid=runners.teamid")[0]
+     p x
+     x[0] = x[0] || 0
+     x[1] = x[1] || ''
+     x[2] = x[2] || 0
+     x[3] = x[3] || ''
+     data +=   "    <tr><td>Самый медленный средний темп</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[3]}</td><td>#{x[2]} мин/км</td></tr>\n"
+
+     x = db.execute("SELECT l.runnerid, runnername, strftime('%M:%S',MAX(t/d),'unixepoch'), teamname FROM (SELECT runnerid, SUM(time) t, SUM(distance) d FROM log WHERE date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' AND time>0 GROUP BY runnerid) l, runners, teams WHERE runners.runnerid=l.runnerid AND sex=0 AND teams.teamid=runners.teamid")[0]
+     p x
+     x[0] = x[0] || 0
+     x[1] = x[1] || ''
+     x[2] = x[2] || 0
+     x[3] = x[3] || ''
+     data +=   "    <tr class='alt'><td>Самый медленный средний темп у женщин</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[3]}</td><td>#{x[2]} мин/км</td></tr>\n"
 
      data +=   "   </tbody>\n"
      data +=   "</table>\n"
