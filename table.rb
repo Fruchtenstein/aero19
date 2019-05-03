@@ -265,14 +265,15 @@ data += "</center>\n"
 data += "<div class=\"datagrid\">\n"
 data += "<table>\n"
 data += "<tbody>\n"
-data += "<thead><tr><th>Имя</th><th>Объемы 2019 (км)</th><th>Объемы 2019 (%)</th><th>Объемы 2018 (км)</th><th>Команда</th></tr></thead>\n"
+data += "<thead><tr><th></th><th>Имя</th><th>Объемы 2019 (км)</th><th>Объемы 2019 (%)</th><th>Объемы 2018 (км)</th><th>Команда</th></tr></thead>\n"
 odd = true
+i = 0
 db.execute("SELECT runnerid, runnername, teamname, (SELECT COALESCE(SUM(distance),0) FROM log WHERE runnerid=r.runnerid GROUP BY runnerid) d, (SELECT goal FROM runners WHERE runnerid=r.runnerid) g, 100*(SELECT COALESCE(SUM(distance),0) FROM log WHERE runnerid=r.runnerid GROUP BY runnerid)/(SELECT goal FROM runners WHERE runnerid=r.runnerid) FROM runners r JOIN teams USING (teamid) ORDER BY d DESC") do |r|
   note = db.execute("SELECT title FROM titles WHERE runnerid=#{r[0]}").join("<br />")
   if odd
-    data += "<tr><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[3].round(2)}</td><td>#{r[5].round(2)}</td><td>#{r[4].round(2)}</td><td>#{r[2]}</td></tr>\n"
+    data += "<tr><td>#{i+=1}</td><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[3].round(2)}</td><td>#{r[5].round(2)}</td><td>#{r[4].round(2)}</td><td>#{r[2]}</td></tr>\n"
   else
-    data += "<tr class=\"alt\"><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[3].round(2)}</td><td>#{r[5].round(2)}</td><td>#{r[4].round(2)}</td><td>#{r[2]}</td></tr>\n"
+    data += "<tr class=\"alt\"><td>#{i+=1}</td><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[3].round(2)}</td><td>#{r[5].round(2)}</td><td>#{r[4].round(2)}</td><td>#{r[2]}</td></tr>\n"
   end
   odd = !odd
 end
@@ -290,14 +291,15 @@ data += "</center>\n"
 data += "<div class=\"datagrid\">\n"
 data += "<table>\n"
 data += "<tbody>\n"
-data += "<thead><tr><th>Имя</th><th>Объемы 2019 (%)</th><th>Объемы 2019 (км)</th><th>Объемы 2018 (км)</th><th>Команда</th></tr></thead>\n"
+data += "<thead><tr><th></th><th>Имя</th><th>Объемы 2019 (%)</th><th>Объемы 2019 (км)</th><th>Объемы 2018 (км)</th><th>Команда</th></tr></thead>\n"
 odd = true
+i = 0
 db.execute("SELECT runnerid, runnername, teamname, (SELECT COALESCE(SUM(distance),0) FROM log WHERE runnerid=r.runnerid GROUP BY runnerid) d, (SELECT goal FROM runners WHERE runnerid=r.runnerid) g, 100*(SELECT COALESCE(SUM(distance),0) FROM log WHERE runnerid=r.runnerid GROUP BY runnerid)/(SELECT goal FROM runners WHERE runnerid=r.runnerid) p FROM runners r JOIN teams USING (teamid) ORDER BY p DESC") do |r|
   note = db.execute("SELECT title FROM titles WHERE runnerid=#{r[0]}").join("<br />")
   if odd
-    data += "<tr><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[5].round(2)}</td><td>#{r[3].round(2)}</td><td>#{r[4].round(2)}</td><td>#{r[2]}</td></tr>\n"
+    data += "<tr><td>#{i+=1}</td><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[5].round(2)}</td><td>#{r[3].round(2)}</td><td>#{r[4].round(2)}</td><td>#{r[2]}</td></tr>\n"
   else
-    data += "<tr class=\"alt\"><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[5].round(2)}</td><td>#{r[3].round(2)}</td><td>#{r[4].round(2)}</td><td>#{r[2]}</td></tr>\n"
+    data += "<tr class=\"alt\"><td>#{i+=1}</td><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[5].round(2)}</td><td>#{r[3].round(2)}</td><td>#{r[4].round(2)}</td><td>#{r[2]}</td></tr>\n"
   end
   odd = !odd
 end
@@ -315,14 +317,15 @@ data += "</center>\n"
 data += "<div class=\"datagrid\">\n"
 data += "<table>\n"
 data += "<tbody>\n"
-data += "<thead><tr><th>Имя</th><th>Объемы 2018 (км)</th><th>Объемы 2019 (км)</th><th>Объемы 2019 (%)</th><th>Команда</th></tr></thead>\n"
+data += "<thead><tr><th></th><th>Имя</th><th>Объемы 2018 (км)</th><th>Объемы 2019 (км)</th><th>Объемы 2019 (%)</th><th>Команда</th></tr></thead>\n"
 odd = true
+i = 0
 db.execute("SELECT runnerid, runnername, teamname, (SELECT COALESCE(SUM(distance),0) FROM log WHERE runnerid=r.runnerid GROUP BY runnerid) d, (SELECT goal FROM runners WHERE runnerid=r.runnerid) g, 100*(SELECT COALESCE(SUM(distance),0) FROM log WHERE runnerid=r.runnerid GROUP BY runnerid)/(SELECT goal FROM runners WHERE runnerid=r.runnerid) p FROM runners r JOIN teams USING (teamid) ORDER BY g DESC") do |r|
   note = db.execute("SELECT title FROM titles WHERE runnerid=#{r[0]}").join("<br />")
   if odd
-    data += "<tr><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[4].round(2)}</td><td>#{r[3].round(2)}</td><td>#{r[5].round(2)}</td><td>#{r[2]}</td></tr>\n"
+    data += "<tr><td>#{i+=1}</td><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[4].round(2)}</td><td>#{r[3].round(2)}</td><td>#{r[5].round(2)}</td><td>#{r[2]}</td></tr>\n"
   else
-    data += "<tr class=\"alt\"><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[4].round(2)}</td><td>#{r[3].round(2)}</td><td>#{r[5].round(2)}</td><td>#{r[2]}</td></tr>\n"
+    data += "<tr class=\"alt\"><td>#{i+=1}</td><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[4].round(2)}</td><td>#{r[3].round(2)}</td><td>#{r[5].round(2)}</td><td>#{r[2]}</td></tr>\n"
   end
   odd = !odd
 end
@@ -344,14 +347,15 @@ db.execute("SELECT * FROM teams ORDER BY teamid") do |t|
     data += "<div class=\"datagrid\">\n"
     data += "<table>\n"
     data += "<tbody>\n"
-    data += "<thead><tr><th>Имя</th><th>Объемы 2018 (км/год)</th><th>Примечания</th></tr></thead>\n"
+    data += "<thead><tr><th></th><th>Имя</th><th>Объемы 2018 (км/год)</th><th>Примечания</th></tr></thead>\n"
     odd = true
+    i = 0
     db.execute("SELECT * FROM runners WHERE teamid=#{t[0]} ORDER BY goal DESC") do |r|
         note = db.execute("SELECT title FROM titles WHERE runnerid=#{r[0]}").join("<br />")
         if odd
-            data += "<tr><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[3].round(2)}</td><td>#{note}</td></tr>\n"
+            data += "<tr><td>#{i+=1}</td><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[3].round(2)}</td><td>#{note}</td></tr>\n"
         else
-            data += "<tr class=\"alt\"><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[3].round(2)}</td><td>#{note}</td></tr>\n"
+            data += "<tr class=\"alt\"><td>#{i+=1}</td><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[3].round(2)}</td><td>#{note}</td></tr>\n"
         end
         odd = !odd
     end
