@@ -272,7 +272,7 @@ db.execute("SELECT runnerid, runnername, teamname, (SELECT COALESCE(SUM(distance
   if odd
     data += "<tr><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[3].round(2)}</td><td>#{r[5].round(2)}</td><td>#{r[4].round(2)}</td><td>#{r[2]}</td></tr>\n"
   else
-    data += "<tr class=\"alt\"><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[3].round(2)}</td><td>#{r[5].round(2)}</td><td>#{r[5].round(2)}</td><td>#{r[2]}</td></tr>\n"
+    data += "<tr class=\"alt\"><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[3].round(2)}</td><td>#{r[5].round(2)}</td><td>#{r[4].round(2)}</td><td>#{r[2]}</td></tr>\n"
   end
   odd = !odd
 end
