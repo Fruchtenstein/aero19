@@ -74,6 +74,8 @@ rules_erb = ERB.new(File.read('rules.html.erb'))
 teams_erb = ERB.new(File.read('teams.html.erb'))
 user_erb = ERB.new(File.read('u.html.erb'))
 users_erb = ERB.new(File.read('users.html.erb'))
+users2_erb = ERB.new(File.read('users2.html.erb'))
+users3_erb = ERB.new(File.read('users3.html.erb'))
 statistics_erb = ERB.new(File.read('statistics.html.erb'))
 
 db = SQLite3::Database.new("2019.db")
@@ -257,11 +259,61 @@ end
 ### Process users.html
 data = ""
 data += "<center>\n"
+data += "<h1>По километрам</h1>\n"
+data += "</center>\n"
+data += "<div class=\"datagrid\">\n"
+data += "<table>\n"
+data += "<tbody>\n"
+data += "<thead><tr><th>Имя</th><th>Объемы 2019 (км)</th><th>Команда</th></tr></thead>\n"
+odd = true
+db.execute("SELECT runnerid, runnername, teamname, (SELECT COALESCE(SUM(distance),0) FROM log WHERE runnerid=runners.runnerid GROUP BY runnerid) d FROM runners JOIN teams USING (teamid) ORDER BY d DESC") do |r|
+  note = db.execute("SELECT title FROM titles WHERE runnerid=#{r[0]}").join("<br />")
+  if odd
+    data += "<tr><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[3].round(2)}</td><td>#{r[2]}</td></tr>\n"
+  else
+    data += "<tr class=\"alt\"><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[3].round(2)}</td><td>#{r[2]}</td></tr>\n"
+  end
+  odd = !odd
+end
+data += "</tbody>\n"
+data += "</table>\n"
+data += "</div>\n"
+data += "<br />\n"
+File.open("html/users.html", 'w') { |f| f.write(users_erb.result(binding)) }
+
+### Process users2.html
+data = ""
+data += "<center>\n"
+data += "<h1>По процентам</h1>\n"
+data += "</center>\n"
+data += "<div class=\"datagrid\">\n"
+data += "<table>\n"
+data += "<tbody>\n"
+data += "<thead><tr><th>Имя</th><th>Объемы 2019 (%)</th><th>Команда</th></tr></thead>\n"
+odd = true
+db.execute("SELECT runnerid, runnername, teamname, (SELECT 100*COALESCE(SUM(distance),0)/(SELECT goal FROM runners WHERE runnerid=log.runnerid) FROM log WHERE runnerid=runners.runnerid GROUP BY runnerid) d FROM runners JOIN teams USING (teamid) ORDER BY d DESC") do |r|
+  note = db.execute("SELECT title FROM titles WHERE runnerid=#{r[0]}").join("<br />")
+  if odd
+    data += "<tr><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[3].round(2)}</td><td>#{r[2]}</td></tr>\n"
+  else
+    data += "<tr class=\"alt\"><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{r[3].round(2)}</td><td>#{r[2]}</td></tr>\n"
+  end
+  odd = !odd
+end
+data += "</tbody>\n"
+data += "</table>\n"
+data += "</div>\n"
+data += "<br />\n"
+File.open("html/users2.html", 'w') { |f| f.write(users2_erb.result(binding)) }
+
+### Process users3.html
+data = ""
+data += "<center>\n"
 data += "<h1>Команды и участники</h1>\n"
 data += "</center>\n"
 db.execute("SELECT * FROM teams ORDER BY teamid") do |t|
     data += "<center>\n"
-    data += "<h2>#{t[1]}</h1>\n"
+    data += "<h2>#{t[1]}</h2>\n"
     data += "</center>\n"
     data += "<div class=\"datagrid\">\n"
     data += "<table>\n"
@@ -282,7 +334,7 @@ db.execute("SELECT * FROM teams ORDER BY teamid") do |t|
     data += "</div>\n"
     data += "<br />\n"
 end
-File.open("html/users.html", 'w') { |f| f.write(users_erb.result(binding)) }
+File.open("html/users3.html", 'w') { |f| f.write(users3_erb.result(binding)) }
 
 ### Process teams*.html
 [*STARTCHM.to_date.cweek..(Date.today.cweek)].reverse_each do |w|
