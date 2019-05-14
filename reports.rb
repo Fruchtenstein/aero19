@@ -21,6 +21,11 @@ r = `litecli 2019.db -te "select runnername,date,strftime('%M:%S',time/distance,
 puts r
 r = `litecli 2019.db -te "select runnername,date,strftime('%M:%S',time/distance,'unixepoch') pace,distance, log.runnerid from log,runners where date>'#{bow}' and date<'#{eow}' and log.runnerid=runners.runnerid and sex=0 order by pace limit 5"`
 puts r
+puts "больше всего процентов"
+r = `litecli 2019.db -te "select l.runnerid, runnername, d, teamname from (select runnerid, 100*sum(distance)/(select 7*goal/365 from runners where runnerid=log.runnerid) d from log where date>'#{bow}' and date<'#{eow}' group by runnerid) l, runners, teams where runners.runnerid=l.runnerid and teams.teamid=runners.teamid order by d DESC limit 5"`
+puts r
+r = `litecli 2019.db -te "select l.runnerid, runnername, d, teamname from (select runnerid, 100*sum(distance)/(select 7*goal/365 from runners where runnerid=log.runnerid) d from log where date>'#{bow}' and date<'#{eow}' group by runnerid) l, runners, teams where runners.runnerid=l.runnerid and sex=0 and teams.teamid=runners.teamid order by d DESC limit 5"`
+puts r
 puts "самая медленная пробежка"
 r = `litecli 2019.db -te "select runnername,date,strftime('%M:%S',time/distance,'unixepoch') pace,distance, log.runnerid from log,runners where date>'#{bow}' and date<'#{eow}' and log.runnerid=runners.runnerid order by pace DESC limit 10"`
 puts r
