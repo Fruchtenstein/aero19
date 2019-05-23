@@ -16,6 +16,11 @@ r = `litecli 2019.db -te "select log.runnerid, runnername,date,distance,'http://
 puts r
 r = `litecli 2019.db -te "select log.runnerid, runnername,date,distance,'http://aerobia.ru/users/'|| log.runnerid||'/workouts/'||runid from log,runners where date>'#{bow}' and date<'#{eow}' and log.runnerid=runners.runnerid and sex=0 order by distance desc limit 5"` 
 puts r
+puts "самая продолжительная пробежка"
+r = `litecli 2019.db -te "select log.runnerid, runnername,date,time, strftime('%H:%M:%S',time,'unixepoch') duration,'http://aerobia.ru/users/'|| log.runnerid||'/workouts/'||runid from log,runners where date>'#{bow}' and date<'#{eow}' and log.runnerid=runners.runnerid order by time desc limit 5"` 
+puts r
+r = `litecli 2019.db -te "select log.runnerid, runnername,date,time, strftime('%H:%M:%S',time,'unixepoch') duration,'http://aerobia.ru/users/'|| log.runnerid||'/workouts/'||runid from log,runners where date>'#{bow}' and date<'#{eow}' and log.runnerid=runners.runnerid and sex=0 order by time desc limit 5"` 
+puts r
 puts "самая быстрая пробежка"
 r = `litecli 2019.db -te "select log.runnerid, runnername,date,strftime('%M:%S',time/distance,'unixepoch') pace,distance, 'http://aerobia.ru/users/'|| log.runnerid||'/workouts/'||runid from log,runners where date>'#{bow}' and date<'#{eow}' and log.runnerid=runners.runnerid order by pace limit 5"`
 puts r
