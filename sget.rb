@@ -39,7 +39,7 @@ p getend
 p now
 
 conn = HTTPClient.new
-db = SQLite3::Database.new("s2019.db")
+db = SQLite3::Database.new("2019.db")
 url = "https://www.strava.com/api/v3/athlete/activities"
 p url
 db.execute("DELETE FROM log WHERE date>'#{getstart.iso8601}' and date<'#{getend.iso8601}'")
@@ -54,12 +54,17 @@ db.execute("SELECT runnerid, sid, reftoken, runnername, teamid, goal FROM runner
     h = {"Authorization" => "Bearer #{token}"}
     #   resp = c.post(url, {"after" => after, "before" => before, "per_page" => 300}, {"Authorization" => "Bearer #{token}"})
     resp = conn.get(url, d, h)
-    j = JSON.parse(resp.content)
-    j.each do |run|
-        id, type, distance, start_date, time = run['id'], run['type'], run['distance'], run['start_date'], run['moving_time']
-        if type == 'Run'
-            p "INSERT OR REPLACE INTO log VALUES(#{id}, #{rid}, '#{start_date}', #{distance/1000}, #{time.to_i}, '#{type}')"
-            db.execute("INSERT OR REPLACE INTO log VALUES(#{id}, #{rid}, '#{start_date}', #{distance/1000}, #{time.to_i}, '#{type}')")
+    if resp.status == 200 then
+        j = JSON.parse(resp.content)
+        p j
+        j.each do |run|
+            id, type, distance, start_date, time = run['id'], run['type'], run['distance'], run['start_date'], run['moving_time']
+            if type == 'Run'
+                p "INSERT OR REPLACE INTO log VALUES(#{id}, #{rid}, '#{start_date}', #{distance/1000}, #{time.to_i}, '#{type}')"
+                db.execute("INSERT OR REPLACE INTO log VALUES(#{id}, #{rid}, '#{start_date}', #{distance/1000}, #{time.to_i}, '#{type}')")
+            end
         end
+    else
+        print "ERROR: response code #{resp.status}, content: #{resp.content}"
     end
 end
