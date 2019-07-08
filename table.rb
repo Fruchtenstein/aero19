@@ -179,7 +179,7 @@ runners.each do |r|
     data += "<tr><td><b>Команда</b></td><td>#{teams[r[2]-1][1]}</td></tr>"
     data += "<tr><td><b>Недельный план</b></td><td>#{(7*r[3]/365).round(2)}</td></tr>"
     data += "<tr><td><b>Достижения</b></td><td>#{note}</td></tr>"
-    data += "<tr><td><b>Профиль на Аэробии</b></td><td><a href=\"http://aerobia.ru/users/#{r[0]}\">http://aerobia.ru/users/#{r[0]}</a></td></tr>"
+    data += "<tr><td><b>Профиль на Страве</b></td><td><a href=\"https://strava.com/athletes/#{r[5]}\">httsp://strava.com/athletes/#{r[5]}</a></td></tr>"
     data += "</tbody>\n"
     data += "</table>\n"
 
@@ -398,9 +398,9 @@ File.open("html/users4.html", 'w') { |f| f.write(users4_erb.result(binding)) }
              sum_pct += pct
              sum_goal += goal
              if odd
-                 data += "  <tr><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{goal.round(2)}</td><td><a href=\"http://aerobia.ru/users/#{r[0]}\">#{dist.round(2)}</a></td><td>#{pct.round(2)}</td></tr>\n"
+                 data += "  <tr><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{goal.round(2)}</td><td><a href=\"https://strava.com/athletes/#{r[5]}\">#{dist.round(2)}</a></td><td>#{pct.round(2)}</td></tr>\n"
              else
-                 data += "  <tr class=\"alt\"><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{goal.round(2)}</td><td><a href=\"http://aerobia.ru/users/#{r[0]}\">#{dist.round(2)}</a></td><td>#{pct.round(2)}</td></tr>\n"
+                 data += "  <tr class=\"alt\"><td><a href=\"u#{r[0]}.html\">#{r[1]}</a></td><td>#{goal.round(2)}</td><td><a href=\"http://strava.com/athletes/#{r[5]}\">#{dist.round(2)}</a></td><td>#{pct.round(2)}</td></tr>\n"
              end
              odd = !odd
          end
@@ -493,7 +493,7 @@ end
      x[2] = x[2] || 0
      x[3] = x[3] || 0
      x[4] = x[4] || ''
-     data +=   "    <tr><td>Самая длинная тренировка</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[4]}</td><td><a href='http://aerobia.ru/users/#{x[0]}/workouts/#{x[3]}'>#{x[2].round(2)} км</a></td></tr>\n"
+     data +=   "    <tr><td>Самая длинная тренировка</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[4]}</td><td><a href='http://strava.com/activities/#{x[3]}'>#{x[2].round(2)} км</a></td></tr>\n"
 
      x = db.execute("SELECT log.runnerid, runnername, MAX(distance), runid, teamname FROM log, runners, teams WHERE date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' AND runners.runnerid=log.runnerid AND sex=0 AND teams.teamid=runners.teamid")[0]
      p x
@@ -502,7 +502,7 @@ end
      x[2] = x[2] || 0
      x[3] = x[3] || 0
      x[4] = x[4] || ''
-     data +=   "    <tr class='alt'><td>Самая длинная тренировка у женщин</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[4]}</td><td><a href='http://aerobia.ru/users/#{x[0]}/workouts/#{x[3]}'>#{x[2].round(2)} км</a></td></tr>\n"
+     data +=   "    <tr class='alt'><td>Самая длинная тренировка у женщин</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[4]}</td><td><a href='http://strava.com/activities/#{x[3]}'>#{x[2].round(2)} км</a></td></tr>\n"
 
      x = db.execute("SELECT log.runnerid, runnername, strftime('%H:%M:%S',MAX(time),'unixepoch'), runid, teamname FROM log, runners, teams WHERE date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' AND runners.runnerid=log.runnerid AND teams.teamid=runners.teamid")[0]
      p x
@@ -511,7 +511,7 @@ end
      x[2] = x[2] || 0
      x[3] = x[3] || 0
      x[4] = x[4] || ''
-     data +=   "    <tr><td>Самая продолжительная тренировка</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[4]}</td><td><a href='http://aerobia.ru/users/#{x[0]}/workouts/#{x[3]}'>#{x[2]}</a></td></tr>\n"
+     data +=   "    <tr><td>Самая продолжительная тренировка</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[4]}</td><td><a href='http://strava.com/activities/#{x[3]}'>#{x[2]}</a></td></tr>\n"
 
      x = db.execute("SELECT log.runnerid, runnername, strftime('%H:%M:%S',MAX(time),'unixepoch'), runid, teamname FROM log, runners, teams WHERE date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' AND runners.runnerid=log.runnerid AND sex=0 AND teams.teamid=runners.teamid")[0]
      p x
@@ -520,7 +520,7 @@ end
      x[2] = x[2] || 0
      x[3] = x[3] || 0
      x[4] = x[4] || ''
-     data +=   "    <tr class='alt'><td>Самая продолжительная тренировка у женщин</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[4]}</td><td><a href='http://aerobia.ru/users/#{x[0]}/workouts/#{x[3]}'>#{x[2]}</a></td></tr>\n"
+     data +=   "    <tr class='alt'><td>Самая продолжительная тренировка у женщин</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[4]}</td><td><a href='http://strava.com/activities/#{x[3]}'>#{x[2]}</a></td></tr>\n"
 
      x = db.execute("SELECT log.runnerid, runnername, strftime('%M:%S',MIN(time/distance),'unixepoch'), runid, distance, teamname FROM log, runners, teams WHERE log.runnerid=runners.runnerid AND date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' AND teams.teamid=runners.teamid AND time>0")[0]
      p x
@@ -530,7 +530,7 @@ end
      x[3] = x[3] || 0
      x[4] = x[4] || 0
      x[5] = x[5] || ''
-     data +=   "    <tr><td>Самая быстрая тренировка</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[5]}</td><td><a href='http://aerobia.ru/users/#{x[0]}/workouts/#{x[3]}'>#{x[2]} мин/км (#{x[4].round(2)} км)</a></td></tr>\n"
+     data +=   "    <tr><td>Самая быстрая тренировка</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[5]}</td><td><a href='http://strava.com/activities/#{x[3]}'>#{x[2]} мин/км (#{x[4].round(2)} км)</a></td></tr>\n"
 
      x = db.execute("SELECT log.runnerid, runnername, strftime('%M:%S',MIN(time/distance),'unixepoch'), runid, distance, teamname FROM log, runners, teams WHERE log.runnerid=runners.runnerid AND date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' AND sex=0 AND teams.teamid=runners.teamid AND time>0")[0]
      p x
@@ -540,7 +540,7 @@ end
      x[3] = x[3] || 0
      x[4] = x[4] || 0
      x[5] = x[5] || ''
-     data +=   "    <tr class='alt'><td>Самая быстрая тренировка у женщин</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[5]}</td><td><a href='http://aerobia.ru/users/#{x[0]}/workouts/#{x[3]}'>#{x[2]} мин/км (#{x[4].round(2)} км)</a></td></tr>\n"
+     data +=   "    <tr class='alt'><td>Самая быстрая тренировка у женщин</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[5]}</td><td><a href='http://strava.com/activities/#{x[3]}'>#{x[2]} мин/км (#{x[4].round(2)} км)</a></td></tr>\n"
 
      x = db.execute("SELECT l.runnerid, runnername, strftime('%M:%S',MIN(t/d),'unixepoch'), teamname FROM (SELECT runnerid, SUM(time) t, SUM(distance) d FROM log WHERE date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' AND time>0 GROUP BY runnerid) l, runners, teams WHERE runners.runnerid=l.runnerid AND teams.teamid=runners.teamid")[0]
      p x
@@ -566,7 +566,7 @@ end
      x[3] = x[3] || 0
      x[4] = x[4] || 0
      x[5] = x[5] || ''
-     data +=   "    <tr><td>Самая медленная тренировка</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[5]}</td><td><a href='http://aerobia.ru/users/#{x[0]}/workouts/#{x[3]}'>#{x[2]} мин/км (#{x[4].round(2)} км)</a></td></tr>\n"
+     data +=   "    <tr><td>Самая медленная тренировка</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[5]}</td><td><a href='http://strava.com/activities/#{x[3]}'>#{x[2]} мин/км (#{x[4].round(2)} км)</a></td></tr>\n"
 
      x = db.execute("SELECT log.runnerid, runnername, strftime('%M:%S',MAX(time/distance),'unixepoch'), runid, distance, teamname FROM log, runners, teams WHERE log.runnerid=runners.runnerid AND date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' AND sex=0 AND teams.teamid=runners.teamid AND time>0")[0]
      p x
@@ -576,7 +576,7 @@ end
      x[3] = x[3] || 0
      x[4] = x[4] || 0
      x[5] = x[5] || ''
-     data +=   "    <tr class='alt'><td>Самая медленная тренировка у женщин</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[5]}</td><td><a href='http://aerobia.ru/users/#{x[0]}/workouts/#{x[3]}'>#{x[2]} мин/км (#{x[4].round(2)} км)</a></td></tr>\n"
+     data +=   "    <tr class='alt'><td>Самая медленная тренировка у женщин</td><td><a href='http://aerobia.net/u#{x[0]}.html'>#{x[1]}</a></td><td>#{x[5]}</td><td><a href='http://strava.com/activities/#{x[3]}'>#{x[2]} мин/км (#{x[4].round(2)} км)</a></td></tr>\n"
 
      x = db.execute("SELECT l.runnerid, runnername, strftime('%M:%S',MAX(t/d),'unixepoch'), teamname FROM (SELECT runnerid, SUM(time) t, SUM(distance) d FROM log WHERE date>'#{bow.iso8601}' AND date<'#{eow.iso8601}' AND time>0 GROUP BY runnerid) l, runners, teams WHERE runners.runnerid=l.runnerid AND teams.teamid=runners.teamid")[0]
      p x
