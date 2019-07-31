@@ -26,10 +26,12 @@ get '/' do
             retry if (retries += 1) < 3
         end
         j = JSON.parse(response.body)
-        puts "ID: #{j['athlete']['id']}; rtoken: #{j['refresh_token']}; atoken: #{j['access_token']}"
+        puts j
+#        puts "ID: #{j['athlete']['id']}; rtoken: #{j['refresh_token']}; atoken: #{j['access_token']}"
         begin
             retries ||= 0
             db = SQLite3::Database.new("2019.db")
+            puts "UPDATE runners SET acctoken='#{j['access_token']}', reftoken='#{j['refresh_token']}' WHERE sid=#{j['athlete']['id']}"
             db.execute("UPDATE runners SET acctoken='#{j['access_token']}', reftoken='#{j['refresh_token']}' WHERE sid=#{j['athlete']['id']}")
             db.close
         rescue => e

@@ -39,7 +39,7 @@ puts "-------- First token: #{token}"
 db = SQLite3::Database.new("2019.db")
 #db.execute("DELETE FROM log WHERE date>'#{getstart.iso8601}' and date<'#{getend.iso8601}' AND runnerid=")
 runners = []
-db.execute("SELECT * FROM runners WHERE runnerid=") do |r|
+db.execute("SELECT * FROM runners WHERE runnerid=81652") do |r|
     rid, rname, tid, goal = r
     (1..now.month).each do |m|
         url = "http://aerobia.ru/api/users/#{rid}/calendar/2019/#{m.to_s.rjust(2,'0')}"
