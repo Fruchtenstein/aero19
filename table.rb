@@ -176,7 +176,7 @@ runners.each do |r|
     data += "<table>\n"
     data += "<tbody>\n"
     data += "<tr><td><b>Имя</b></td><td>#{r[1]}</td></tr>"
-    data += "<tr><td><b>Команда</b></td><td>#{teams[r[2]-1][1]}</td></tr>"
+    data += "<tr><td><b>Команда</b></td><td>#{r[2]==0 ? "-" : teams[r[2]-1][1]}</td></tr>"
     data += "<tr><td><b>Недельный план</b></td><td>#{(7*r[3]/365).round(2)}</td></tr>"
     data += "<tr><td><b>Достижения</b></td><td>#{note}</td></tr>"
     data += "<tr><td><b>Профиль на Страве</b></td><td><a href=\"https://strava.com/athletes/#{r[5]}\">https://strava.com/athletes/#{r[5]}</a></td></tr>"
