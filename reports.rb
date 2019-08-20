@@ -6,6 +6,9 @@ bow = 1.week.ago.beginning_of_week.iso8601
 eow = 1.week.ago.end_of_week.iso8601
 #r = "select runnername,sum(distance) d,log.runnerid from log,runners where date>'#{bow}' and date<'#{eow}' and log.runnerid=runners.runnerid group by log.runnerid order by d desc limit 5"
 #puts r
+puts "соревнования"
+r = `litecli 2019.db -te "select runnername, date, round(distance,2) dist,strftime('%H:%M:%S',time,'unixepoch') duration,strftime('%M:%S',time/distance,'unixepoch') pace, 'https://strava.com/activities/'||runid from log,runners where date>'#{bow}' and date<'#{eow}' and log.runnerid=runners.runnerid and workout_type=1"`
+puts r
 puts "самая длинная неделя"
 r = `litecli 2019.db -te "select  runnername,sum(distance) d from log,runners where date>'#{bow}' and date<'#{eow}' and log.runnerid=runners.runnerid group by log.runnerid order by d desc limit 5"`
 puts r

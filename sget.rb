@@ -58,10 +58,14 @@ db.execute("SELECT runnerid, sid, reftoken, runnername, teamid, goal FROM runner
         j = JSON.parse(resp.content)
         p j
         j.each do |run|
-            id, type, distance, start_date, time = run['id'], run['type'], run['distance'], run['start_date'], run['moving_time']
+            id, type, distance, start_date, time, workout_type= run['id'], run['type'], run['distance'], run['start_date'], run['moving_time'], run['workout_type']
+            if workout_type.nil?
+                workout_type=0
+            end
+            commute = run['commute'] ? 1 : 0
             if type == 'Run'
-                p "INSERT OR REPLACE INTO log VALUES(#{id}, #{rid}, '#{start_date}', #{distance/1000}, #{time.to_i}, '#{type}')"
-                db.execute("INSERT OR REPLACE INTO log VALUES(#{id}, #{rid}, '#{start_date}', #{distance/1000}, #{time.to_i}, '#{type}')")
+                p "INSERT OR REPLACE INTO log VALUES(#{id}, #{rid}, '#{start_date}', #{distance/1000}, #{time.to_i}, '#{type}', #{workout_type}, #{commute})"
+                db.execute("INSERT OR REPLACE INTO log VALUES(#{id}, #{rid}, '#{start_date}', #{distance/1000}, #{time.to_i}, '#{type}', #{workout_type}, #{commute})")
             end
         end
     else
