@@ -159,6 +159,50 @@ if now > STARTCHM
     end
 end
 
+if now > STARTCUP
+  w = Date.today.cweek.to_i
+  start_cup_week = STARTCUP.to_date.cweek.to_i
+  cup_week = w - start_cup_week + 1
+  (1..3).each do |i|
+    cup += "<center>\n"
+    cup += "  <br />\n"
+    if i == 3
+      cup += "  <h1>Финал</h1>"
+    else
+      cup += "  <h1>Полуфинал #{i}</h1>"
+    end
+    cup += "</center>\n"
+    cup += "<div class=\"datagrid\"><table>\n"
+    cup += "  <thead><tr><th>Неделя</th><th>Команда</th><th>Результат (км)</th></tr></thead>\n"
+    cup += "  <tbody>\n"
+    teams = db.execute("SELECT teamid FROM playoff WHERE bracket=#{i}")
+    if teams[0][0] == 0 and teams[1][0] == 0
+      t1 = '?'
+      t2 = '?'
+    else
+      t1 = db.execute("SELECT teamname FROM teams WHERE teamid=#{teams[0][0]}")[0][0]
+      t2 = db.execute("SELECT teamname FROM teams WHERE teamid=#{teams[1][0]}")[0][0]
+    end
+    (0..2).each do |n|
+      d1 = (db.execute("SELECT COALESCE(distance,0) FROM cup WHERE teamid=#{teams[0][0]} AND week=#{start_cup_week+n}")[0] || [0.0])[0]
+      d2 = (db.execute("SELECT COALESCE(distance,0) FROM cup WHERE teamid=#{teams[1][0]} AND week=#{start_cup_week+n}")[0] || [0.0])[0]
+      if n == 1
+        cup += "    <tr class=\"alt\"><td rowspan=\"2\">#{n+1}</td><td>#{t1}</td><td>#{d1.round(2)}</td></tr>\n"
+        cup += "    <tr class=\"alt\"><td>#{t2}</td><td>#{d2.round(2)}</td></tr>\n"
+      else
+        cup += "    <tr><td rowspan=\"2\">#{n+1}</td><td>#{t1}</td><td>#{d1.round(2)}</td></tr>\n"
+        cup += "    <tr><td>#{t2}</td><td>#{d2.round(2)}</td></tr>\n"
+      end
+    end
+    cup += "  </tbody>\n"
+    cup += "</table>\n"
+    cup += "</div>\n"
+  end
+  cup += "<hr />\n"
+end
+
+
+
 File.open('html/index.html', 'w') { |f| f.write(index_erb.result) }
 File.open('html/rules.html', 'w') { |f| f.write(rules_erb.result) }
 

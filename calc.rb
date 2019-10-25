@@ -10,20 +10,23 @@ def calcweek (now)
     teams = []
     (1..TEAMS).each do |t|
         num_of_runners = db.execute("SELECT COUNT(*) FROM runners WHERE teamid=#{t}")[0][0]
+        tdist = 0
         sum_pct = 0
         db.execute("SELECT runnerid, goal*7/365.0 FROM runners WHERE teamid=#{t}") do |r|
             dist = db.execute("SELECT COALESCE(SUM(distance),0) FROM log WHERE runnerid=#{r[0]} AND date>'#{now.beginning_of_week.iso8601}' AND date<'#{now.end_of_week.iso8601}'")[0][0]
             goal = r[1]
             sum_pct += (dist/goal)*100
+            tdist += dist
         end
-        teams << [t, week_number, sum_pct/num_of_runners]
+        teams << [t, week_number, sum_pct/num_of_runners, tdist]
     end
     teams.sort! { |x,y| y[2] <=> x[2] }
     teams.each do |t|
         place = teams.index(t)+1
         points = 5*(TEAMS-place)
-        p          "INSERT OR REPLACE INTO points VALUES (#{t[0]}, #{week_number}, #{points}, #{t[2]})"
-        db.execute("INSERT OR REPLACE INTO points VALUES (#{t[0]}, #{week_number}, #{points}, #{t[2]})")
+        p          "INSERT OR REPLACE INTO points VALUES (#{t[0]}, #{week_number}, #{points}, #{t[2]}, #{t[3]})"
+        db.execute("INSERT OR REPLACE INTO points VALUES (#{t[0]}, #{week_number}, #{points}, #{t[2]}, #{t[3]})")
+        db.execute("INSERT OR REPLACE INTO cup VALUES (#{t[0]}, #{week_number}, #{points}, #{t[2]}, #{t[3]})")
     end
 end
 
