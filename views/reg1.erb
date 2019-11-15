@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <title>Соревнования на Кубок Аэробии | Таблица</title>
+  <meta content="https://aerobia.net/assets/aerobia-2ebacfbc9d1c2bc03bfab224ec470e42.gif" property="og:image" />
+  <link href="/assets/application-1fd0a358e6b9e12ee7c6518fefc54274.css" media="screen" rel="stylesheet" type="text/css" />
+<style type="text/css">
+.datagrid table { border-collapse: collapse; text-align: left; width: 100%; } .datagrid {font: normal 12px/150% Arial, Helvetica, sans-serif; background: #fff; overflow: hidden; border: 1px solid #8C8C8C; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; }.datagrid table td, .datagrid table th { padding: 3px 10px; }.datagrid table thead th {background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #8C8C8C), color-stop(1, #7D7D7D) );background:-moz-linear-gradient( center top, #8C8C8C 5%, #7D7D7D 100% );filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#8C8C8C', endColorstr='#7D7D7D');background-color:#8C8C8C; color:#FFFFFF; font-size: 15px; font-weight: bold; border-left: 1px solid #A3A3A3; } .datagrid table thead th:first-child { border: none; }.datagrid table tbody td { color: #444444; border-left: 1px solid #DBDBDB;font-size: 12px;font-weight: normal; }.datagrid table tbody .alt td { background: #EBEBEB; color: #444444; }.datagrid table tbody td:first-child { border-left: none; }.datagrid table tbody tr:last-child td { border-bottom: none; }.datagrid table tfoot td div { border-top: 1px solid #8C8C8C;background: #EBEBEB;} .datagrid table tfoot td { padding: 3px 10px; font-size: 12px; background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #8C8C8C), color-stop(1, #7D7D7D)); color:#FFFFFF } .datagrid table tfoot td div{ padding: 2px; }.datagrid table tfoot td ul { margin: 0; padding:0; list-style: none; text-align: right; }.datagrid table tfoot  li { display: inline; }.datagrid table tfoot li a { text-decoration: none; display: inline-block;  padding: 2px 8px; margin: 1px;color: #F5F5F5;border: 1px solid #8C8C8C;-webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #8C8C8C), color-stop(1, #7D7D7D) );background:-moz-linear-gradient( center top, #8C8C8C 5%, #7D7D7D 100% );filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#8C8C8C', endColorstr='#7D7D7D');background-color:#8C8C8C; }.datagrid table tfoot ul.active, .datagrid table tfoot ul a:hover { text-decoration: none;border-color: #7D7D7D; color: #F5F5F5; background: none; background-color:#8C8C8C;}div.dhtmlx_window_active, div.dhx_modal_cover_dv { position: fixed !important; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <strong class="logo ru"><a href="https://aerobia.net">Aerobia</a></strong>
+  </div>
+</header>
+
+  <aside class="current user">
+    <div>
+      <div>
+        <div class="name">
+          <div>
+            <strong>Кубок Аэробии</strong>
+          </div>
+        </div>
+        <nav>
+            <h1 style="color:white;padding-left:20px;line-height:60px">Регистрация</h1>
+        </nav>
+      </div>
+    </div>
+  </aside>
+
+
+<div class="middle">
+  <div class="block">
+  <div class="section">
+    <table>
+      <tr>
+        <td class="aside">
+
+
+        </td>
+        <td>
+            <br />
+            <br />
+            <br />
+            <form action="reg2">
+                Логин:<br />
+                <input type="text" name="login" value="<%= session[:uname] %>" disabled><br />
+                Имя:<br />
+                <input type="text" name="fname" value="<%= session[:fname] %>" required><br />
+                Фамилия:<br />
+                <input type="text" name="lname" value="<%= session[:lname] %>" required><br />
+                Email:<br />
+                <input type="text" name="email" required><br />
+                Объемы 2019 года:<br />
+                <input type="text" name="volume" required><br />
+                <br />
+                <button type="submit">Отправить</button>
+                <br />
+            </form>
+
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+
+</div>
+
+<footer>
+  <div>
+
+  </div>
+</footer>
+
+<div class="foobar">
+  <div>
+    <div>
+      <ul>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>
