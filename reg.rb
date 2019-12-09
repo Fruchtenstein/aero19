@@ -8,6 +8,10 @@ require_relative './config.rb'
 enable :sessions
 set :port => 28538, :bind => '127.0.0.1'
 
+get '/r2020' do
+    erb :r2020
+end
+
 get '/reg1' do
     if request['code'].nil?
         puts "No code"
