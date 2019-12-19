@@ -162,14 +162,17 @@ end
 if now > STARTCUP
   w = Date.today.cweek.to_i
   start_cup_week = STARTCUP.to_date.cweek.to_i
+  final_week = start_cup_week + 4
   cup_week = w - start_cup_week + 1
   (1..3).each do |i|
     cup += "<center>\n"
     cup += "  <br />\n"
     if i == 3
       cup += "  <h1>Финал</h1>"
+      calc_week = final_week
     else
       cup += "  <h1>Полуфинал #{i}</h1>"
+      calc_week = start_cup_week
     end
     cup += "</center>\n"
     cup += "<div class=\"datagrid\"><table>\n"
@@ -184,8 +187,8 @@ if now > STARTCUP
       t2 = db.execute("SELECT teamname FROM teams WHERE teamid=#{teams[1][0]}")[0][0]
     end
     (0..2).each do |n|
-      d1 = (db.execute("SELECT COALESCE(distance,0) FROM cup WHERE teamid=#{teams[0][0]} AND week=#{start_cup_week+n}")[0] || [0.0])[0]
-      d2 = (db.execute("SELECT COALESCE(distance,0) FROM cup WHERE teamid=#{teams[1][0]} AND week=#{start_cup_week+n}")[0] || [0.0])[0]
+      d1 = (db.execute("SELECT COALESCE(distance,0) FROM cup WHERE teamid=#{teams[0][0]} AND week=#{calc_week+n}")[0] || [0.0])[0]
+      d2 = (db.execute("SELECT COALESCE(distance,0) FROM cup WHERE teamid=#{teams[1][0]} AND week=#{calc_week+n}")[0] || [0.0])[0]
       if n == 1
         cup += "    <tr class=\"alt\"><td rowspan=\"2\">#{n+1}</td><td>#{t1}</td><td>#{d1.round(2)}</td></tr>\n"
         cup += "    <tr class=\"alt\"><td>#{t2}</td><td>#{d2.round(2)}</td></tr>\n"
